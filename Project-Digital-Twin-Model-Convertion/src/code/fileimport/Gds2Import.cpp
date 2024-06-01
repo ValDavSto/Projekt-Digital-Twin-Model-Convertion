@@ -23,8 +23,9 @@ int Gds2Import::getCoordinates(std::byte a, std::byte b, std::byte c, std::byte 
 
 std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 	unsigned int layer = 0;
+	uint32_t filesize = data.size();
 	std::vector<Polygon> polygons = {};
-	for (int i = 0; i < data.size() - 1; i++) {
+	for (int i = 0; i < filesize - 1; i++) {
 		unsigned int boundarySize = 0;
 		// i iterates through whole file to find boundarys
 		if (getWordInt(data[i], data[i + 1]) == BOUNDARY) { // 0800 denotes the start of an boundary/polygon in a gdsii file
@@ -33,7 +34,7 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 			bool isBoundary = false;
 
 
-			for (j; j < data.size() - 1; j++) {
+			for (j; j < filesize - 1; j++) {
 				
 				// j iterates through a boundary
 				if (getWordInt(data[j], data[j + 1]) == LAYER) { // 0D02 denotes a layer 
