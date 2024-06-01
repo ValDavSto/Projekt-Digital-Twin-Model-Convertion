@@ -28,7 +28,8 @@ std::vector<Layer> ICFactory::getLayers(std::vector<Polygon>& polygons) {
 }
 
 IC ICFactory::generateIC(std::string name, std::string filepath) {
-	std::vector<Polygon> polygons = Gds2Import::getPolygons(Gds2Import::readFileData(filepath));
+	Gds2Import import = Gds2Import();
+	std::vector<Polygon> polygons = import.getPolygons(import.readFileData(filepath));
 	std::vector<Layer> layers = getLayers(polygons);
 
 	IC new_IC(name, layers);

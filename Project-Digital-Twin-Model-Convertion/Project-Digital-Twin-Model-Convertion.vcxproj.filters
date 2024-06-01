@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\code\ICFactory.cpp" />
+    <ClCompile Include="src\code\datastructure\IC.cpp" />
+    <ClCompile Include="src\code\datastructure\Layer.cpp" />
+    <ClCompile Include="src\code\datastructure\Polygon.cpp" />
+    <ClCompile Include="src\code\Test.cpp" />
+    <ClCompile Include="src\code\fileimport\ImportInterface.cpp" />
+    <ClCompile Include="src\code\fileimport\Gds2Import.cpp" />
+    <ClCompile Include="src\code\datastructure\Gds2Structure.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\header\Gds2Import.h" />
+    <ClInclude Include="src\header\IC.h" />
+    <ClInclude Include="src\header\ICFactory.h" />
+    <ClInclude Include="src\header\ImportInterface.h" />
+    <ClInclude Include="src\header\Layer.h" />
+    <ClInclude Include="src\header\Polygon.h" />
+    <ClInclude Include="src\header\Gds2Structure.h" />
+  </ItemGroup>
+</Project>

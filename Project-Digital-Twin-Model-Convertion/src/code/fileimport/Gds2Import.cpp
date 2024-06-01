@@ -3,6 +3,14 @@
 #include <fstream>
 #include <iostream>
 
+// macros which define tags in a gds2 file
+#define BGNSTR 0x0502 // befin of a structure
+#define STRNAME 0x0606 // name of structure
+#define BOUNDARY 0x0800 // begin of a boundary / polygon
+#define SREF 0x0A00 // bein of an strucutre reference elemnet, a copy of the referenced strucuture will be placed at the given coordinates
+#define SNAME 0x1206 // name of the referenced strucutre
+#define LAYER 0x0D02 // begin of a layer
+#define XY 0x1003  // list of coordinates, each coordinate is a 4 byte long singed integer
 
 
 int Gds2Import::getWordInt(std::byte a, std::byte b) {
@@ -19,7 +27,7 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 	for (int i = 0; i < data.size() - 1; i++) {
 		unsigned int boundarySize = 0;
 		// i iterates through whole file to find boundarys
-		if (getWordInt(data[i], data[i + 1]) == 0x0800) { // 0800 denotes the start of an boundary/polygon in a gdsii file
+		if (getWordInt(data[i], data[i + 1]) == BOUNDARY) { // 0800 denotes the start of an boundary/polygon in a gdsii file
 			int j = i;
 			boundarySize = getWordInt(data[i - 2], data[i - 1]) / 2;
 			bool isBoundary = false;
@@ -28,13 +36,13 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 			for (j; j < data.size() - 1; j++) {
 				
 				// j iterates through a boundary
-				if (getWordInt(data[j], data[j + 1]) == 0x0d02) { // 0D02 denotes a layer 
+				if (getWordInt(data[j], data[j + 1]) == LAYER) { // 0D02 denotes a layer 
 					layer = (unsigned int)data[j + 3];
 					std::cout << "Layer: " << (unsigned int)data[j + 3] << std::endl;
 					isBoundary = true;
 				}
 
-				if (getWordInt(data[j], data[j + 1]) == 0x1003 && isBoundary) { // 1003 denotes the xy coordinates of the boundary/polygon
+				if (getWordInt(data[j], data[j + 1]) == XY && isBoundary) { // 1003 denotes the xy coordinates of the boundary/polygon
 					
 					unsigned int entrySize = getWordInt(data[j - 2], data[j - 1]) / 2; // the word befor the start of the xy coordinates denotes the number of coordinates
 					std::cout << "entry size: " << entrySize << " bytes" << std::endl;
