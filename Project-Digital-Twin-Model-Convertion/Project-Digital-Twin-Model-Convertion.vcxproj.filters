@@ -9,6 +9,7 @@
     <ClCompile Include="src\code\fileimport\ImportInterface.cpp" />
     <ClCompile Include="src\code\fileimport\Gds2Import.cpp" />
     <ClCompile Include="src\code\datastructure\Gds2Structure.cpp" />
+    <ClCompile Include="src\code\datastructure\StructRef.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\header\Gds2Import.h" />
@@ -18,5 +19,6 @@
     <ClInclude Include="src\header\Layer.h" />
     <ClInclude Include="src\header\Polygon.h" />
     <ClInclude Include="src\header\Gds2Structure.h" />
+    <ClInclude Include="src\header\StructRef.h" />
   </ItemGroup>
 </Project>

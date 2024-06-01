@@ -27,6 +27,7 @@
     <ClCompile Include="src\code\fileimport\ImportInterface.cpp" />
     <ClCompile Include="src\code\ICFactory.cpp" />
     <ClCompile Include="src\code\Test.cpp" />
+    <ClCompile Include="src\code\datastructure\StructRef.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\header\Gds2Import.h" />
@@ -36,6 +37,7 @@
     <ClInclude Include="src\header\ImportInterface.h" />
     <ClInclude Include="src\header\Layer.h" />
     <ClInclude Include="src\header\Polygon.h" />
+    <ClInclude Include="src\header\StructRef.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -93,25 +95,25 @@
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>$(SolutionDir)obj\</IntDir>
     <TargetName>$(ProjectName)32d</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\Valentin\source\repos\Project-Digital-Twin-Model-Convertion\src\header</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\src\header</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>$(SolutionDir)obj\</IntDir>
     <TargetName>$(ProjectName)32</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\Valentin\source\repos\Project-Digital-Twin-Model-Convertion\src\header</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\src\header</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>$(SolutionDir)obj\</IntDir>
     <TargetName>$(ProjectName)64d</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\Valentin\source\repos\Project-Digital-Twin-Model-Convertion\src\header</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\src\header</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\</OutDir>
     <IntDir>$(SolutionDir)obj\</IntDir>
     <TargetName>$(ProjectName)64</TargetName>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\Valentin\source\repos\Project-Digital-Twin-Model-Convertion\src\header</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)\src\header</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

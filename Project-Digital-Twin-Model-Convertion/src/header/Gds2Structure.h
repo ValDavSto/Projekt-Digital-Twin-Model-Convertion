@@ -4,20 +4,24 @@
 #include <string>
 #include <vector>
 #include "Polygon.h"
+#include "StructRef.h"
 
+
+// This class represents a gds2 structure whith all its polygons and structure references
+// WARNING: only the boundary type is tracked
 class Gds2Structure {
 private:
 	std::string name;
 	std::vector<Polygon> polygons;
-	std::vector<Gds2Structure> structureReferences;
+	std::vector<StructRef> structureReferences;
 public:
 	Gds2Structure(std:: string name, std::vector<Polygon> polygons);
 
 	std::string getName();
 	std::vector<Polygon> getPolygons();
-	std::vector<Gds2Structure> getStructRef();
+	std::vector<StructRef> getStructRef();
 
-	void setStructRef(std::vector<Gds2Structure> structRef);
+	void setStructRef(std::vector<StructRef> structRef);
 };
 
 
