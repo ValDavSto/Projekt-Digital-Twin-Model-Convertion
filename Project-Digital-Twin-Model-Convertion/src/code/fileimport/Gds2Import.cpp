@@ -63,26 +63,26 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 	unsigned int layer = 0;
 	int filesize = data.size();
 	std::vector<Polygon> polygons = {};
+	bool isBoundary = false;
+
+
 	for (int i = 0; i < filesize - 1; i++) {
 		unsigned int boundarySize = 0;
 		// i iterates through whole file to find boundarys
 		if (getWordInt(data[i], data[i + 1]) == BOUNDARY) { // 0800 denotes the start of an boundary/polygon in a gdsii file
 			int j = i;
 			boundarySize = getWordInt(data[i - 2], data[i - 1]) / 2;
-			bool isBoundary = false;
+			isBoundary = true;
 
-
-			for (j; j < filesize - 1; j++) {
-				
+			while (isBoundary && j < filesize -1) {
 				// j iterates through a boundary
 				if (getWordInt(data[j], data[j + 1]) == LAYER) { // 0D02 denotes a layer 
 					layer = (unsigned int)data[j + 3];
 					std::cout << "Layer: " << (unsigned int)data[j + 3] << std::endl;
-					isBoundary = true;
 				}
 
-				if (getWordInt(data[j], data[j + 1]) == XY && isBoundary) { // 1003 denotes the xy coordinates of the boundary/polygon
-					
+				if (getWordInt(data[j], data[j + 1]) == XY) { // 1003 denotes the xy coordinates of the boundary/polygon
+
 					unsigned int entrySize = getWordInt(data[j - 2], data[j - 1]) / 2; // the word befor the start of the xy coordinates denotes the number of coordinates
 					std::cout << "entry size: " << entrySize << " bytes" << std::endl;
 
@@ -91,7 +91,7 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 					int position = j + 2; // Position of the byte which is read from the filedata
 					std::cout << "Position: " << position << std::endl;
 
-					
+
 					// extract coordinates of the boundary/polygon
 					// each coordinate is 4 bytes long
 					// iterates over the coordinates
@@ -112,10 +112,11 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 					Polygon newPolygon(layer, coordinates);
 					polygons.push_back(newPolygon);
 				}
+
+				j++;
 			}
-			// all important information from the boundary is retreved, the program continues to read after the boundary coordinates 
-			// TODO: can be optimised if the size of the hole boundary element is stored, so it can skip to the end
-			i = i + boundarySize;
+			i = j;
+			
 		}
 	}
 	return polygons;
