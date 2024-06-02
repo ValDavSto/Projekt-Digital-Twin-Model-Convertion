@@ -73,15 +73,18 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 			int j = i;
 			boundarySize = getWordInt(data[i - 2], data[i - 1]) / 2;
 			isBoundary = true;
-
+			bool containsLayer = false; //is needed for double checking if it is a boundary
 			while (isBoundary && j < filesize -1) {
+
+				
 				// j iterates through a boundary
 				if (getWordInt(data[j], data[j + 1]) == LAYER) { // 0D02 denotes a layer 
+					containsLayer = true;
 					layer = (unsigned int)data[j + 3];
 					std::cout << "Layer: " << (unsigned int)data[j + 3] << std::endl;
 				}
-
-				if (getWordInt(data[j], data[j + 1]) == XY) { // 1003 denotes the xy coordinates of the boundary/polygon
+				
+				if (getWordInt(data[j], data[j + 1]) == XY &&  containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
 
 					unsigned int entrySize = getWordInt(data[j - 2], data[j - 1]) / 2; // the word befor the start of the xy coordinates denotes the number of coordinates
 					std::cout << "entry size: " << entrySize << " bytes" << std::endl;
@@ -108,11 +111,12 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 						position += 8;
 					}
 					isBoundary = false;
+					containsLayer = false;
 
 					Polygon newPolygon(layer, coordinates);
 					polygons.push_back(newPolygon);
 				}
-
+				
 				j++;
 			}
 			i = j;
