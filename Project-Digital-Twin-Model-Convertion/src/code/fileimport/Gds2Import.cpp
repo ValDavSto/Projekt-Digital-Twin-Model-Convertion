@@ -23,7 +23,7 @@ int Gds2Import::getCoordinates(std::byte a, std::byte b, std::byte c, std::byte 
 
 std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 	unsigned int layer = 0;
-	uint32_t filesize = data.size();
+	int filesize = data.size();
 	std::vector<Polygon> polygons = {};
 	for (int i = 0; i < filesize - 1; i++) {
 		unsigned int boundarySize = 0;

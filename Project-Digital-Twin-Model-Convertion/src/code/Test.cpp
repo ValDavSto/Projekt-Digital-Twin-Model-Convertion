@@ -35,7 +35,7 @@ void printBinary(std::vector<std::byte> data) {
 int main() {
 	//std::string path = R"(C:\Users\Valentin\source\repos\occtest\testgds2.GDS)";
 	std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\nand2.gds)";
-	std::vector<std::byte> filedata(Gds2Import::readFileData(path));
+	
 	IC new_IC = ICFactory::generateIC("Test", path);
 	
 	//std::vector<Polygon> polygons = Gds2Import::getPolygons(filedata);
