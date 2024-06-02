@@ -12,15 +12,53 @@
 #define LAYER 0x0D02 // begin of a layer
 #define XY 0x1003  // list of coordinates, each coordinate is a 4 byte long singed integer
 
-
+// takes 2 std::byte objects, add them together and converts them into an int (unsigned)
 int Gds2Import::getWordInt(std::byte a, std::byte b) {
 	return (int)a << 8 | (int)b;
 }
 
+// gds2 coordinates are 4byte long, those 4 bytes are converted to a signed int
 int Gds2Import::getCoordinates(std::byte a, std::byte b, std::byte c, std::byte d) {
 	return static_cast<int>((static_cast<uint32_t>(a) << 24) | (static_cast<uint32_t>(b) << 16) | static_cast<uint32_t>(c) << 8 | static_cast<uint32_t>(d));
 }
 
+std::string Gds2Import::getStructureName(int readPosition, int size, std::vector<std::byte>& data){
+	std::string structName(size, '\0');
+	readPosition += 2; // the recived readposiont is at the first byte which denotes a STRNAME or SNAME (each 2 byte long). To read the string the program starts 2 bytes later at the first byte which represents a char
+	size += size - 4; // size is reduced because it contains 2 bytes which contain the entry size and 2 bytes which are the STRNAME or SNAME tag
+
+	int strIt = 0;
+
+	for (readPosition; readPosition < size; readPosition++) {
+		structName[strIt] = static_cast<char>(data[readPosition]);
+		strIt++;
+	}
+	return structName;
+}
+
+
+
+void Gds2Import::getPol(std::vector<std::byte> data) {
+	uint32_t filesize = data.size();
+
+	for (int i = 0; i < filesize - 1; i++) {
+		if (getWordInt(data[i], data[i + 1]) == STRNAME) {
+			int elementSize = getWordInt(data[i - 2], data[i - 1]) / 2;
+			int strIt = i + elementSize - 1; // StructureIterator skips unimportant information of the STRNAME element
+
+			for (strIt; strIt < filesize - 1; strIt++) {
+
+				if (getWordInt(data[strIt], data[strIt + 1]) == BOUNDARY) {
+
+				}
+				if (getWordInt(data[strIt], data[strIt + 1]) == SREF) {
+
+				}
+			}
+
+		}
+	}
+}
 std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 	unsigned int layer = 0;
 	int filesize = data.size();
