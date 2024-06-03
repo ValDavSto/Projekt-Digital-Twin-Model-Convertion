@@ -18,7 +18,7 @@ int Gds2Import::getWordInt(std::byte a, std::byte b) {
 }
 
 // gds2 coordinates are 4byte long, those 4 bytes are converted to a signed int
-int Gds2Import::getCoordinates(std::byte a, std::byte b, std::byte c, std::byte d) {
+int Gds2Import::getCoordinate(std::byte a, std::byte b, std::byte c, std::byte d) {
 	return static_cast<int>((static_cast<uint32_t>(a) << 24) | (static_cast<uint32_t>(b) << 16) | static_cast<uint32_t>(c) << 8 | static_cast<uint32_t>(d));
 }
 
@@ -40,6 +40,34 @@ std::string Gds2Import::getStructName(int readPosition, int size, std::vector<st
 	return structName;
 }
 
+std::vector<std::pair<int, int>> Gds2Import::getXY(int readPosition, std::vector<std::byte>& data) {
+	unsigned int entrySize = getWordInt(data[readPosition - 2], data[readPosition - 1]) / 2; // the word befor the start of the xy coordinates denotes the number of coordinates
+	int coordIt = readPosition + 2; // Position of the byte which is read from the filedata
+	std::vector<std::pair<int, int>> coordinates = {};
+	
+	//Print information aboout coordinates
+	//std::cout << "entry size: " << entrySize << " bytes" << std::endl;
+	//std::cout << "Position: " << coordIt << std::endl;
+
+	// extract coordinates of the boundary/polygon
+	// each coordinate is 4 bytes long
+	// iterates over the coordinates
+	for (int i = 0; i < (entrySize - 2) / 4; i++) {
+		//std::cout << "Position: " << position << std::endl;
+
+		int x = getCoordinate(data[coordIt], data[coordIt + 1], data[coordIt + 2], data[coordIt + 3]);
+		int y = getCoordinate(data[coordIt + 4], data[coordIt + 5], data[coordIt + 6], data[coordIt + 7]);
+
+		std::cout << "xy: (" << x << ", " << y << ")" << std::endl;
+
+		std::pair<int, int> xy = std::make_pair(x, y);
+		coordinates.push_back(xy);
+		coordIt += 8;
+	}
+
+	return coordinates;
+}
+
 std::pair<Polygon, int> Gds2Import::getPolygon(int readPosition, uint32_t filesize, std::vector<std::byte>& data) {
 	unsigned int layer = 0;
 	bool isBoundary = true;
@@ -57,30 +85,8 @@ std::pair<Polygon, int> Gds2Import::getPolygon(int readPosition, uint32_t filesi
 
 		if (getWordInt(data[j], data[j + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
 
-			unsigned int entrySize = getWordInt(data[j - 2], data[j - 1]) / 2; // the word befor the start of the xy coordinates denotes the number of coordinates
-			std::cout << "entry size: " << entrySize << " bytes" << std::endl;
-
-			std::vector<std::pair<int, int>> coordinates = {};
-
-			int position = j + 2; // Position of the byte which is read from the filedata
-			std::cout << "Position: " << position << std::endl;
-
-
-			// extract coordinates of the boundary/polygon
-			// each coordinate is 4 bytes long
-			// iterates over the coordinates
-			for (int k = 0; k < (entrySize - 2) / 4; k++) {
-				//std::cout << "Position: " << position << std::endl;
-
-				int x = getCoordinates(data[position], data[position + 1], data[position + 2], data[position + 3]);
-				int y = getCoordinates(data[position + 4], data[position + 5], data[position + 6], data[position + 7]);
-
-				std::cout << "xy: (" << x << ", " << y << ")" << std::endl;
-
-				std::pair<int, int> xy = std::make_pair(x, y);
-				coordinates.push_back(xy);
-				position += 8;
-			}
+			std::vector<std::pair<int, int>> coordinates = getXY(j, data);
+			
 			isBoundary = false;
 			containsLayer = false;
 
