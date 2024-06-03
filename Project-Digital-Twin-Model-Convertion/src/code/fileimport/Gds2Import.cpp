@@ -22,7 +22,11 @@ int Gds2Import::getCoordinates(std::byte a, std::byte b, std::byte c, std::byte 
 	return static_cast<int>((static_cast<uint32_t>(a) << 24) | (static_cast<uint32_t>(b) << 16) | static_cast<uint32_t>(c) << 8 | static_cast<uint32_t>(d));
 }
 
-std::string Gds2Import::getStructureName(int readPosition, int size, std::vector<std::byte>& data){
+int Gds2Import::getElemSize(std::byte a, std::byte b) {
+	return getWordInt(a, b) / 2;
+}
+
+std::string Gds2Import::getStructName(int readPosition, int size, std::vector<std::byte>& data){
 	std::string structName(size, '\0');
 	readPosition += 2; // the recived readposiont is at the first byte which denotes a STRNAME or SNAME (each 2 byte long). To read the string the program starts 2 bytes later at the first byte which represents a char
 	size += size - 4; // size is reduced because it contains 2 bytes which contain the entry size and 2 bytes which are the STRNAME or SNAME tag
@@ -36,6 +40,62 @@ std::string Gds2Import::getStructureName(int readPosition, int size, std::vector
 	return structName;
 }
 
+std::pair<Polygon, int> Gds2Import::getPolygon(int readPosition, uint32_t filesize, std::vector<std::byte>& data) {
+	unsigned int layer = 0;
+	bool isBoundary = true;
+	bool containsLayer = false;
+	Polygon poly = Polygon();
+	int j = readPosition;
+
+	while (isBoundary && j < filesize - 1) {
+		// j iterates through a boundary
+		if (getWordInt(data[j], data[j + 1]) == LAYER) { // 0D02 denotes a layer 
+			containsLayer = true;
+			layer = (unsigned int)data[j + 3];
+			std::cout << "Layer: " << (unsigned int)data[j + 3] << std::endl;
+		}
+
+		if (getWordInt(data[j], data[j + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
+
+			unsigned int entrySize = getWordInt(data[j - 2], data[j - 1]) / 2; // the word befor the start of the xy coordinates denotes the number of coordinates
+			std::cout << "entry size: " << entrySize << " bytes" << std::endl;
+
+			std::vector<std::pair<int, int>> coordinates = {};
+
+			int position = j + 2; // Position of the byte which is read from the filedata
+			std::cout << "Position: " << position << std::endl;
+
+
+			// extract coordinates of the boundary/polygon
+			// each coordinate is 4 bytes long
+			// iterates over the coordinates
+			for (int k = 0; k < (entrySize - 2) / 4; k++) {
+				//std::cout << "Position: " << position << std::endl;
+
+				int x = getCoordinates(data[position], data[position + 1], data[position + 2], data[position + 3]);
+				int y = getCoordinates(data[position + 4], data[position + 5], data[position + 6], data[position + 7]);
+
+				std::cout << "xy: (" << x << ", " << y << ")" << std::endl;
+
+				std::pair<int, int> xy = std::make_pair(x, y);
+				coordinates.push_back(xy);
+				position += 8;
+			}
+			isBoundary = false;
+			containsLayer = false;
+
+			poly.setCoordinates(coordinates);
+			poly.setLayer(layer);
+		}
+
+		j++;
+	}
+
+	std::pair<Polygon, int> polygon = std::make_pair(poly, j);
+
+
+	return polygon;
+}
 
 
 void Gds2Import::getPol(std::vector<std::byte> data) {
@@ -44,6 +104,7 @@ void Gds2Import::getPol(std::vector<std::byte> data) {
 	for (int i = 0; i < filesize - 1; i++) {
 		if (getWordInt(data[i], data[i + 1]) == STRNAME) {
 			int elementSize = getWordInt(data[i - 2], data[i - 1]) / 2;
+			std::string structName = getStructName(i, elementSize, data);
 			int strIt = i + elementSize - 1; // StructureIterator skips unimportant information of the STRNAME element
 
 			for (strIt; strIt < filesize - 1; strIt++) {
@@ -52,7 +113,7 @@ void Gds2Import::getPol(std::vector<std::byte> data) {
 
 				}
 				if (getWordInt(data[strIt], data[strIt + 1]) == SREF) {
-
+					std::string refName = getStructName(strIt, getElemSize(data[strIt - 2], data[strIt - 1]), data);
 				}
 			}
 
@@ -67,59 +128,15 @@ std::vector<Polygon> Gds2Import::getPolygons(std::vector<std::byte> data) {
 
 
 	for (int i = 0; i < filesize - 1; i++) {
-		unsigned int boundarySize = 0;
+
 		// i iterates through whole file to find boundarys
 		if (getWordInt(data[i], data[i + 1]) == BOUNDARY) { // 0800 denotes the start of an boundary/polygon in a gdsii file
-			int j = i;
-			boundarySize = getWordInt(data[i - 2], data[i - 1]) / 2;
-			isBoundary = true;
-			bool containsLayer = false; //is needed for double checking if it is a boundary
-			while (isBoundary && j < filesize -1) {
+			
 
-				
-				// j iterates through a boundary
-				if (getWordInt(data[j], data[j + 1]) == LAYER) { // 0D02 denotes a layer 
-					containsLayer = true;
-					layer = (unsigned int)data[j + 3];
-					std::cout << "Layer: " << (unsigned int)data[j + 3] << std::endl;
-				}
-				
-				if (getWordInt(data[j], data[j + 1]) == XY &&  containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
-
-					unsigned int entrySize = getWordInt(data[j - 2], data[j - 1]) / 2; // the word befor the start of the xy coordinates denotes the number of coordinates
-					std::cout << "entry size: " << entrySize << " bytes" << std::endl;
-
-					std::vector<std::pair<int, int>> coordinates = {};
-
-					int position = j + 2; // Position of the byte which is read from the filedata
-					std::cout << "Position: " << position << std::endl;
-
-
-					// extract coordinates of the boundary/polygon
-					// each coordinate is 4 bytes long
-					// iterates over the coordinates
-					for (int k = 0; k < (entrySize - 2) / 4; k++) {
-						//std::cout << "Position: " << position << std::endl;
-
-						int x = getCoordinates(data[position], data[position + 1], data[position + 2], data[position + 3]);
-						int y = getCoordinates(data[position + 4], data[position + 5], data[position + 6], data[position + 7]);
-
-						std::cout << "xy: (" << x << ", " << y << ")" << std::endl;
-
-						std::pair<int, int> xy = std::make_pair(x, y);
-						coordinates.push_back(xy);
-						position += 8;
-					}
-					isBoundary = false;
-					containsLayer = false;
-
-					Polygon newPolygon(layer, coordinates);
-					polygons.push_back(newPolygon);
-				}
-				
-				j++;
-			}
-			i = j;
+			std::pair<Polygon, int> newPol = getPolygon(i, filesize, data);
+			
+			polygons.push_back(newPol.first);
+			i = newPol.second;
 			
 		}
 	}

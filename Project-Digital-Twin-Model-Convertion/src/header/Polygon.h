@@ -13,8 +13,9 @@ private:
 
 public:
 	Polygon(unsigned int l, std::vector<std::pair<int, int>> c);
-	//void setCoordinates(vector<pair<int, int>>);
-	//void setLayer(unsigned int );
+	Polygon();
+	void setCoordinates(std::vector<std::pair<int, int>> coords);
+	void setLayer(unsigned int layer);
 
 	unsigned int getLayer();
 	std::vector<std::pair<int, int>> getCoordinates();
