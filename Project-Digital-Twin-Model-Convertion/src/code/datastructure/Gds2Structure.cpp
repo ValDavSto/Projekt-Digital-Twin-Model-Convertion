@@ -4,11 +4,13 @@ Gds2Structure::Gds2Structure(std::string name, std::vector<Polygon> polygons) : 
 
 Gds2Structure::Gds2Structure(std::string name) : name(name), polygons({}), structureReferences({}) {}
 
-std::string Gds2Structure::getName(){ return std::string(); }
+Gds2Structure::Gds2Structure(): name(""), polygons({}), structureReferences({}) {}
 
-std::vector<Polygon> Gds2Structure::getPolygons(){ return std::vector<Polygon>(); }
+std::string Gds2Structure::getName(){ return name; }
 
-std::vector<StructRef> Gds2Structure::getStructRef(){ return std::vector<StructRef>(); }
+std::vector<Polygon> Gds2Structure::getPolygons(){ return polygons; }
+
+std::vector<StructRef> Gds2Structure::getStructRef(){ return structureReferences; }
 
 void Gds2Structure::setStructRef(std::vector<StructRef> structRef) { structureReferences = structRef; }
 

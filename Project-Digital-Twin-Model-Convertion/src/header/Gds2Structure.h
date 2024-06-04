@@ -17,6 +17,7 @@ private:
 public:
 	Gds2Structure(std::string name, std::vector<Polygon> polygons);
 	Gds2Structure(std::string name);
+	Gds2Structure();
 
 	std::string getName();
 	std::vector<Polygon> getPolygons();

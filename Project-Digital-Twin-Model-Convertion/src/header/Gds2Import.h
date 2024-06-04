@@ -29,8 +29,8 @@ public:
 	Gds2Import(std::string filePath);
 
 	std::vector<Gds2Structure> getStructures();
-	std::vector<Polygon> getPolygons(std::vector<std::byte> data);
 	std::vector<std::byte> readFileData(const std::string& name);
+	std::vector<Polygon> getPolygons();
 	
 
 };
