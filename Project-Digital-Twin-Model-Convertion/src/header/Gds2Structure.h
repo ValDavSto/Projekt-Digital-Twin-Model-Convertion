@@ -24,6 +24,7 @@ public:
 
 	void setStructRef(std::vector<StructRef> structRef);
 	void setPolygons(std::vector<Polygon> polygons);
+	void addStuctRef(StructRef newStrRef);
 };
 
 

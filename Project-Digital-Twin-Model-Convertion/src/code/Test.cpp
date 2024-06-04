@@ -12,6 +12,7 @@
 #include "IC.h"
 #include "Gds2Import.h"
 #include "ICFactory.h"
+#include "Gds2Structure.h"
 
 
 
@@ -36,7 +37,10 @@ int main() {
 	//std::string path = R"(C:\Users\Valentin\source\repos\occtest\testgds2.GDS)";
 	std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\nand2.gds)";
 	
-	IC new_IC = ICFactory::generateIC("Test", path);
+	//IC new_IC = ICFactory::generateIC("Test", path);
+	
+	Gds2Import import = Gds2Import();
+	std::vector<Gds2Structure> structs = import.getPol(import.readFileData(path));
 	
 	//std::vector<Polygon> polygons = Gds2Import::getPolygons(filedata);
 
