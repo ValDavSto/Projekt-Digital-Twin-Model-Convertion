@@ -15,13 +15,15 @@ private:
 	std::vector<Polygon> polygons;
 	std::vector<StructRef> structureReferences;
 public:
-	Gds2Structure(std:: string name, std::vector<Polygon> polygons);
+	Gds2Structure(std::string name, std::vector<Polygon> polygons);
+	Gds2Structure(std::string name);
 
 	std::string getName();
 	std::vector<Polygon> getPolygons();
 	std::vector<StructRef> getStructRef();
 
 	void setStructRef(std::vector<StructRef> structRef);
+	void setPolygons(std::vector<Polygon> polygons);
 };
 
 
