@@ -20,9 +20,9 @@ private:
 	int getWordInt(std::byte a, std::byte b);
 	int getCoordinate(std::byte a, std::byte b, std::byte c, std::byte d);
 	int getElemSize(std::byte a, std::byte b);
-	std::string getStructName(int readPosition, std::vector<std::byte>& data);
-	std::vector<std::pair<int, int>> getXY(std::vector<std::byte>& data);
-	StructRef getStructRef(uint32_t filesize, std::vector<std::byte>& data);
+	std::string getStructName(int readPosition);
+	std::vector<std::pair<int, int>> getXY();
+	StructRef getStructRef();
 	Polygon getPolygon();
 public:
 	Gds2Import();
