@@ -39,8 +39,10 @@ int main() {
 	
 	//IC new_IC = ICFactory::generateIC("Test", path);
 	
-	Gds2Import import = Gds2Import();
-	std::vector<Gds2Structure> structs = import.getStructures(import.readFileData(path));
+	Gds2Import import = Gds2Import(path);
+	std::vector<Gds2Structure> structs = import.getStructures();
+
+	std::cout << structs.size() << std::endl;
 	
 	//std::vector<Polygon> polygons = Gds2Import::getPolygons(filedata);
 

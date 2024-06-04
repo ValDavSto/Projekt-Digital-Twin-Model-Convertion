@@ -15,6 +15,12 @@
 
 Gds2Import::Gds2Import() : readPosition(0){}
 
+Gds2Import::Gds2Import(std::string filePath){
+	data = readFileData(filePath);
+	filesize = data.size();
+	readPosition = 0;
+}
+
 
 uint32_t Gds2Import::getReadPosition(){ return readPosition; }
 
@@ -101,7 +107,7 @@ StructRef Gds2Import::getStructRef( uint32_t filesize, std::vector<std::byte>& d
 
 }
 
-Polygon Gds2Import::getPolygon(uint32_t filesize, std::vector<std::byte>& data) {
+Polygon Gds2Import::getPolygon() {
 	unsigned int layer = 0;
 	bool isBoundary = true;
 	bool containsLayer = false;
@@ -139,11 +145,12 @@ Polygon Gds2Import::getPolygon(uint32_t filesize, std::vector<std::byte>& data) 
 
 
 
-std::vector<Gds2Structure> Gds2Import::getStructures(std::vector<std::byte> data) {
-	uint32_t filesize = data.size();
+std::vector<Gds2Structure> Gds2Import::getStructures() {
+
 	std::vector<Polygon> polygons = {};
 	bool isStruct = false;
 	std::vector<Gds2Structure> structures = {};
+	std::vector<StructRef> structureReferences = {};
 
 	for (int i = 0; i < filesize - 1; i++) {
 		if (getWordInt(data[i], data[i + 1]) == STRNAME) {
@@ -161,7 +168,7 @@ std::vector<Gds2Structure> Gds2Import::getStructures(std::vector<std::byte> data
 				if ((getWordInt(data[strIt], data[strIt + 1]) != ENDSTR)) {
 					if (getWordInt(data[strIt], data[strIt + 1]) == BOUNDARY) {
 						this->setReadPosition(strIt);
-						Polygon newPol = getPolygon(filesize, data);
+						Polygon newPol = getPolygon();
 
 						structPolys.push_back(newPol);
 						strIt = this->getReadPosition();
@@ -184,6 +191,24 @@ std::vector<Gds2Structure> Gds2Import::getStructures(std::vector<std::byte> data
 			structures.push_back(newStruct);
 
 		}
+		
+		if (getWordInt(data[i], data[i + 1]) == BOUNDARY && getWordInt(data[i + 2], data[i + 3]) == LAYER) {
+			this->setReadPosition(i);
+			Polygon newPol = getPolygon();
+
+			polygons.push_back(newPol);
+			i = this->getReadPosition();
+			std::cout << "Boundary added!" << std::endl;
+		}
+		
+		if (getWordInt(data[i], data[i + 1]) == SREF) {
+			this->setReadPosition(i);
+			StructRef newStrRef = getStructRef(filesize, data);
+			structureReferences.push_back(newStrRef);
+			i = this->getReadPosition();
+			std::cout << "SREF added!" << std::endl;
+		}
+		
 	}
 	return structures;
 }

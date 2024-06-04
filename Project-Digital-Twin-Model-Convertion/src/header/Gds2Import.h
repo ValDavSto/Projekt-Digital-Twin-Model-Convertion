@@ -12,6 +12,8 @@
 class Gds2Import{
 private:
 	uint32_t readPosition;
+	std::vector<std::byte> data;
+	uint32_t filesize;
 
 	uint32_t getReadPosition();
 	void setReadPosition(uint32_t currentPosition);
@@ -21,11 +23,12 @@ private:
 	std::string getStructName(int readPosition, std::vector<std::byte>& data);
 	std::vector<std::pair<int, int>> getXY(std::vector<std::byte>& data);
 	StructRef getStructRef(uint32_t filesize, std::vector<std::byte>& data);
-	Polygon getPolygon(uint32_t filesize, std::vector<std::byte>& data);
+	Polygon getPolygon();
 public:
 	Gds2Import();
+	Gds2Import(std::string filePath);
 
-	std::vector<Gds2Structure> getStructures(std::vector<std::byte> data);
+	std::vector<Gds2Structure> getStructures();
 	std::vector<Polygon> getPolygons(std::vector<std::byte> data);
 	std::vector<std::byte> readFileData(const std::string& name);
 	
