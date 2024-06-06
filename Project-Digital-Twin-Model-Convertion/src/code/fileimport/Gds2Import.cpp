@@ -5,12 +5,12 @@
 #include <map>
 
 // macros which define tags in a gds2 file
-#define BGNSTR 0x0502 // befin of a structure
+#define BGNSTR 0x0502 // begin of a structure
 #define STRNAME 0x0606 // name of a structure
 #define ENDSTR 0x0700 // end of a structure
 #define BOUNDARY 0x0800 // begin of a boundary / polygon
-#define SREF 0x0A00 // bein of an strucutre reference elemnet, a copy of the referenced strucuture will be placed at the given coordinates
-#define SNAME 0x1206 // name of the referenced strucutre
+#define SREF 0x0A00 // begin of an structure reference element, a copy of the referenced structure will be placed at the given coordinates
+#define SNAME 0x1206 // name of the referenced structure
 #define LAYER 0x0D02 // begin of a layer
 #define XY 0x1003  // list of coordinates, each coordinate is a 4 byte long singed integer
 
@@ -44,7 +44,7 @@ int Gds2Import::getElemSize(std::byte a, std::byte b) {
 std::string Gds2Import::getStructName(int readPosition){
 	int size = getWordInt(data[readPosition - 2], data[readPosition - 1]);
 	std::string structName(size, '\0');
-	readPosition += 2; // the recived readposiont is at the first byte which denotes a STRNAME or SNAME (each 2 byte long). To read the string the program starts 2 bytes later at the first byte which represents a char
+	readPosition += 2; // the received read position is at the first byte which denotes a STRNAME or SNAME (each 2 byte long). To read the string the program starts 2 bytes later at the first byte which represents a char
 	size -= 4; // size is reduced because it contains 2 bytes which contain the entry size and 2 bytes which are the STRNAME or SNAME tag
 
 	int strIt = 0;
@@ -57,11 +57,11 @@ std::string Gds2Import::getStructName(int readPosition){
 }
 
 std::vector<std::pair<int, int>> Gds2Import::getXY() {
-	unsigned int entrySize = getWordInt(data[readPosition - 2], data[readPosition - 1]) / 2; // the word befor the start of the xy coordinates denotes the number of coordinates
+	unsigned int entrySize = getWordInt(data[readPosition - 2], data[readPosition - 1]) / 2; // the word before the start of the xy coordinates denotes the number of coordinates
 	int coordIt = readPosition + 2; // Position of the byte which is read from the filedata
 	std::vector<std::pair<int, int>> coordinates = {};
 	
-	//Print information aboout coordinates
+	//Print information about coordinates
 	//std::cout << "entry size: " << entrySize << " bytes" << std::endl;
 	//std::cout << "Position: " << coordIt << std::endl;
 
@@ -97,7 +97,7 @@ StructRef Gds2Import::getStructRef() {
 		}
 		if(getWordInt(data[i], data[i + 1]) == XY) {
 			this->setReadPosition(i);
-			coordinates = getXY()[0];
+			coordinates = getXY()[0]; // strRef only contain one set of coordinates at which a copy of the referenced structure is placed
 			isStructRef = false;
 		}
 		i++;
@@ -159,7 +159,7 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 			int elementSize = getWordInt(data[i - 2], data[i - 1]);
 			std::string structName = getStructName(i);
 			int strIt = i + elementSize - 1; // StructureIterator skips unimportant information of the STRNAME element
-			Gds2Structure newStruct(structName);
+			Gds2Structure newStruct(structName); // create empty structure
 			std::vector<Polygon> structPolys = {};
 
 			std::cout << "Structure: " << structName << std::endl;
@@ -168,20 +168,21 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 
 				if ((getWordInt(data[strIt], data[strIt + 1]) != ENDSTR)) {
 					if (getWordInt(data[strIt], data[strIt + 1]) == BOUNDARY) {
-						this->setReadPosition(strIt);
+						this->setReadPosition(strIt); // set current read position for the getPolygon method
 						Polygon newPol = getPolygon();
 
 						structPolys.push_back(newPol);
-						strIt = this->getReadPosition();
+						strIt = this->getReadPosition(); // is needed because the read position changed during the getPolygon method
 
 					} else if (getWordInt(data[strIt], data[strIt + 1]) == SREF) {
+						//same principle as getting a polygon see above
 						this->setReadPosition(strIt);
 						StructRef newStrRef = getStructRef();
 						newStruct.addStuctRef(newStrRef);
 						strIt = this->getReadPosition();
 					}
 				}
-				else {
+				else { // end of structure
 					isStruct = false;
 					i = strIt;
 				}
@@ -193,7 +194,8 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 			structures.push_back(newStruct);
 
 		}
-		
+		// In the case that a boundary or strRef is not a part of struct there will be added in this section
+		// !!! TODO currently they will be not returned by this method, this has to be added
 		if (getWordInt(data[i], data[i + 1]) == BOUNDARY && getWordInt(data[i + 2], data[i + 3]) == LAYER) {
 			this->setReadPosition(i);
 			Polygon newPol = getPolygon();
@@ -212,9 +214,9 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 		}
 		
 	}
-
+	// print information of the structures contained in the file
 	for (auto& str : structures) {
-		std::cout << str.getName() << " " << str.getPolygons().size() << std::endl;
+		std::cout << str.getName() << " Polygons: " << str.getPolygons().size() << " StrRef: " << str.getStructRef().size() << std::endl;
 	}
 	return structures;
 }
