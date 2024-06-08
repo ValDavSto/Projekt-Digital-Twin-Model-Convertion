@@ -1,2 +1,8 @@
-﻿  StructRef.cpp
+﻿  Gds2Import.cpp
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(21,22): warning C4267: "=": Konvertierung von "size_t" nach "uint32_t", Datenverlust möglich
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(71,20): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(118,25): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(156,20): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(167,29): warning C4018: "<": Konflikt zwischen "signed" und "unsigned"
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(226,18): warning C4244: "Initialisierung": Konvertierung von "uintmax_t" in "uint32_t", möglicher Datenverlust
   Project-Digital-Twin-Model-Convertion.vcxproj -> C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.exe
