@@ -1,0 +1,10 @@
+TKernel.lib
+TKPrim.lib
+TKTopAlgo.lib
+TKMath.lib
+TKBRep.lib
+TKOpenGl.lib
+TKV3d.lib
+TKService.lib
+TKBO.lib
+TKDESTEP.lib
