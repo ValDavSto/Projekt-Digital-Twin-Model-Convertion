@@ -23,14 +23,14 @@ private:
 	std::string getStructName(int readPosition);
 	std::vector<std::pair<int, int>> getXY();
 	StructRef getStructRef();
-	Polygon getPolygon();
+	MyPolygon getPolygon();
 public:
 	Gds2Import();
 	Gds2Import(std::string filePath);
 
 	std::vector<Gds2Structure> getStructures();
 	std::vector<std::byte> readFileData(const std::string& name);
-	std::vector<Polygon> getPolygons();
+	std::vector<MyPolygon> getPolygons();
 	
 
 };

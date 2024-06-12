@@ -26,6 +26,9 @@
     <ClCompile Include="src\code\fileimport\Gds2Import.cpp" />
     <ClCompile Include="src\code\fileimport\ImportInterface.cpp" />
     <ClCompile Include="src\code\ICFactory.cpp" />
+    <ClCompile Include="src\code\model\main.cpp" />
+    <ClCompile Include="src\code\model\Viewer.cpp" />
+    <ClCompile Include="src\code\model\ViewerInteractor.cpp" />
     <ClCompile Include="src\code\Test.cpp" />
     <ClCompile Include="src\code\datastructure\StructRef.cpp" />
   </ItemGroup>
@@ -38,6 +41,8 @@
     <ClInclude Include="src\header\Layer.h" />
     <ClInclude Include="src\header\Polygon.h" />
     <ClInclude Include="src\header\StructRef.h" />
+    <ClInclude Include="src\header\Viewer.h" />
+    <ClInclude Include="src\header\ViewerInteractor.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -122,6 +127,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\occt\OCCT-7_8_0-install\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,6 +143,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\occt\OCCT-7_8_0-install\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,10 +159,13 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\occt\OCCT-7_8_0-install\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>TKernel.lib;TKPrim.lib;TKTopAlgo.lib;TKMath.lib;TKBRep.lib;TKOpenGl.lib;TKV3d.lib;TKService.lib;TKBO.lib;TKDESTEP.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\occt\OCCT-7_8_0-install\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,6 +177,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\occt\OCCT-7_8_0-install\inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

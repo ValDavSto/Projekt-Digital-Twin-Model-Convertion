@@ -1,16 +1,16 @@
 #include "Polygon.h"
 
-Polygon::Polygon(unsigned int l, std::vector<std::pair<int, int>> c) : layer(l), coordinates(c){}
+MyPolygon::MyPolygon(unsigned int l, std::vector<std::pair<int, int>> c) : layer(l), coordinates(c){}
 
-Polygon::Polygon() {
+MyPolygon::MyPolygon() {
 	layer = 0;
 	coordinates = {};
 }
 
-void Polygon::setCoordinates(std::vector<std::pair<int, int>> coords){ coordinates = coords; }
+void MyPolygon::setCoordinates(std::vector<std::pair<int, int>> coords){ coordinates = coords; }
 
-void Polygon::setLayer(unsigned int layer) { this->layer = layer; }
+void MyPolygon::setLayer(unsigned int layer) { this->layer = layer; }
 
-unsigned int Polygon::getLayer() { return layer; }
+unsigned int MyPolygon::getLayer() { return layer; }
 
-std::vector<std::pair<int, int>> Polygon::getCoordinates() { return coordinates; }
+std::vector<std::pair<int, int>> MyPolygon::getCoordinates() { return coordinates; }

@@ -1,25 +1,25 @@
-#ifndef POLYGON_H_
-#define POLYGON_H_
+#ifndef MYPOLYGON_H_
+#define MYPOLYGON_H_
 
 #include <vector>
 
 
 
 
-class Polygon{
+class MyPolygon{
 private: 
 		unsigned int layer;
 		std::vector<std::pair<int, int>> coordinates;
 
 public:
-	Polygon(unsigned int l, std::vector<std::pair<int, int>> c);
-	Polygon();
-	void setCoordinates(std::vector<std::pair<int, int>> coords);
+	MyPolygon(unsigned int l, std::vector<std::pair<int, int>> c);
+	MyPolygon();
+	
 	void setLayer(unsigned int layer);
 
 	unsigned int getLayer();
 	std::vector<std::pair<int, int>> getCoordinates();
-
+	void setCoordinates(std::vector<std::pair<int, int>> coords);
 };
 
 #endif // !POLYGON_H_

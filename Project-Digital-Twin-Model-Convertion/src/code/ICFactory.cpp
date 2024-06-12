@@ -4,8 +4,8 @@
 #include <iostream>
 
 
-std::vector<Layer> ICFactory::getLayers(std::vector<Polygon>& polygons) {
-	std::map<int, std::vector<Polygon>> layerMap = {};
+std::vector<Layer> ICFactory::getLayers(std::vector<MyPolygon>& polygons) {
+	std::map<int, std::vector<MyPolygon>> layerMap = {};
 
 	// polygons get mapped to the corresponding layer
 	for (auto& polygon : polygons) {
@@ -29,7 +29,7 @@ std::vector<Layer> ICFactory::getLayers(std::vector<Polygon>& polygons) {
 
 IC ICFactory::generateIC(std::string name, std::string filepath) {
 	Gds2Import import(filepath);
-	std::vector<Polygon> polygons = import.getPolygons();
+	std::vector<MyPolygon> polygons = import.getPolygons();
 	std::vector<Layer> layers = getLayers(polygons);
 
 	IC new_IC(name, layers);
