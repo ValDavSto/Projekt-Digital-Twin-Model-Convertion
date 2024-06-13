@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <map>
+#include <cassert>
 
 // macros which define tags in a gds2 file
 #define BGNSTR 0x0502 // begin of a structure
@@ -20,6 +20,10 @@ Gds2Import::Gds2Import(std::string filePath){
 	data = readFileData(filePath);
 	filesize = data.size();
 	readPosition = 0;
+}
+
+inline void Gds2Import::checkSize(int x) {
+	assert(x < filesize);
 }
 
 
@@ -158,6 +162,8 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 	std::vector<StructRef> structureReferences = {};
 
 	for (int i = 0; i < filesize - 1; i++) {
+
+		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
 		if (getWordInt(data[i], data[i + 1]) == STRNAME) {
 			isStruct = true;
 			int elementSize = getWordInt(data[i - 2], data[i - 1]);
@@ -170,7 +176,12 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 
 			while (isStruct && strIt < filesize - 1) {
 
+				checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+
 				if ((getWordInt(data[strIt], data[strIt + 1]) != ENDSTR)) {
+
+					checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+
 					if (getWordInt(data[strIt], data[strIt + 1]) == BOUNDARY) {
 						this->setReadPosition(strIt); // set current read position for the gePolygon method
 						MyPolygon newPol = getPolygon();
@@ -200,6 +211,8 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 		}
 		// In the case that a boundary or strRef is not a part of struct there will be added in this section
 		// !!! TODO currently they will be not returned by this method, this has to be added
+
+		
 		if (getWordInt(data[i], data[i + 1]) == BOUNDARY && getWordInt(data[i + 2], data[i + 3]) == LAYER) {
 			this->setReadPosition(i);
 			MyPolygon newPol = getPolygon();
@@ -225,19 +238,36 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 	return structures;
 }
 
-std::vector<std::byte> Gds2Import::readFileData(const std::string& name){
-	std::filesystem::path inputFilePath{ name };
-	uint32_t length = std::filesystem::file_size(inputFilePath);
-	std::cout << "Filelength[Byte]: " << length << std::endl;
-	if (length == 0) {
-		return {};  // empty vector
+std::vector<MyPolygon> Gds2Import::getStrRefPolygons(Gds2Structure structure, std::map<std::string, Gds2Structure>& structMap, std::vector<MyPolygon>& polygons) {
+	std::vector<MyPolygon> structPolys = structure.getPolygons();
+	polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
+
+	for (auto& strRef : structure.getStructRef()) {
+		std::pair<int, int> placement = strRef.getCoordinates();
+		Gds2Structure referencedStruct = structMap[strRef.getName()];
+		std::vector<MyPolygon> refPoly = referencedStruct.getPolygons();
+
+		if (referencedStruct.getStructRef().size() > 0) {
+			getStrRefPolygons(referencedStruct, structMap, polygons);
+			// TODO Hier noch zukünftiges return value verarbeiten
+		}
+		for (auto& polygon : refPoly) {
+			std::vector<std::pair<int, int>> coords = polygon.getCoordinates();
+			std::vector<std::pair<int, int>> newCoords = {};
+
+			for (auto& xy : coords) {
+				xy = std::make_pair(xy.first + placement.first, xy.second + placement.second);
+				newCoords.push_back(xy);
+			}
+			polygon.setCoordinates(newCoords);
+			polygons.push_back(polygon);
+
+		}
 	}
-	std::vector<std::byte> buffer(length);
-	std::ifstream inputFile(name, std::ios_base::binary);
-	inputFile.read(reinterpret_cast<char*>(buffer.data()), length);
-	inputFile.close();
-	return buffer;
+
+	return polygons;
 }
+
 
 std::vector<MyPolygon> Gds2Import::getPolygons(){
 	std::vector<Gds2Structure> structures = getStructures();
@@ -249,11 +279,13 @@ std::vector<MyPolygon> Gds2Import::getPolygons(){
 	}
 	
 	for (auto& structure : structures){
-		std::vector<MyPolygon> structPolys = structure.getPolygons();
+		std::vector<MyPolygon> structPolys = getStrRefPolygons(structure, structMap, polygons);
+		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
+		/*std::vector<MyPolygon> structPolys = structure.getPolygons();
 		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
 
 		for (auto& strRef : structure.getStructRef()) {
-				std::pair<int, int> placement = strRef.getCoordinates();
+			std::pair<int, int> placement = strRef.getCoordinates();
 			Gds2Structure referencedStruct = structMap[strRef.getName()];
 			std::vector<MyPolygon> refPoly = referencedStruct.getPolygons();
 
@@ -269,8 +301,22 @@ std::vector<MyPolygon> Gds2Import::getPolygons(){
 				polygons.push_back(polygon);
 
 			}
-		}
+		}*/
 	}
 
 	return polygons;
+}
+
+std::vector<std::byte> Gds2Import::readFileData(const std::string& name) {
+	std::filesystem::path inputFilePath{ name };
+	uint32_t length = std::filesystem::file_size(inputFilePath);
+	std::cout << "Filelength[Byte]: " << length << std::endl;
+	if (length == 0) {
+		return {};  // empty vector
+	}
+	std::vector<std::byte> buffer(length);
+	std::ifstream inputFile(name, std::ios_base::binary);
+	inputFile.read(reinterpret_cast<char*>(buffer.data()), length);
+	inputFile.close();
+	return buffer;
 }
