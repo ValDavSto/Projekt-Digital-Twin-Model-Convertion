@@ -24,7 +24,7 @@ private:
 	int getElemSize(std::byte a, std::byte b);
 	std::string getStructName(int readPosition);
 	std::vector<std::pair<int, int>> getXY();
-	std::vector<MyPolygon> getStrRefPolygons(Gds2Structure str, std::map<std::string, Gds2Structure>& structMap, std::vector<MyPolygon>& polygons);
+	std::vector<MyPolygon> getStrRefPolygons(Gds2Structure& str, std::map<std::string, Gds2Structure>& structMap, std::vector<MyPolygon>& polygons);
 	StructRef getStructRef();
 	MyPolygon getPolygon();
 public:

@@ -238,9 +238,8 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 	return structures;
 }
 
-std::vector<MyPolygon> Gds2Import::getStrRefPolygons(Gds2Structure structure, std::map<std::string, Gds2Structure>& structMap, std::vector<MyPolygon>& polygons) {
-	std::vector<MyPolygon> structPolys = structure.getPolygons();
-	polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
+std::vector<MyPolygon> Gds2Import::getStrRefPolygons(Gds2Structure& structure, std::map<std::string, Gds2Structure>& structMap, std::vector<MyPolygon>& polygons) {
+	
 
 	for (auto& strRef : structure.getStructRef()) {
 		std::pair<int, int> placement = strRef.getCoordinates();
@@ -279,7 +278,17 @@ std::vector<MyPolygon> Gds2Import::getPolygons(){
 	}
 	
 	for (auto& structure : structures){
-		std::vector<MyPolygon> structPolys = getStrRefPolygons(structure, structMap, polygons);
+		std::vector<MyPolygon> structPolys = structure.getPolygons();
+		std::vector<MyPolygon> emptyVec = {};
+		
+		if (structure.getStructRef().size() > 0) {
+			std::vector<MyPolygon> strRefPolys = getStrRefPolygons(structure, structMap, emptyVec);
+			structPolys.insert(structPolys.end(), strRefPolys.begin(), strRefPolys.end());
+		}
+		
+
+		std::cout << "Structure: " << structure.getName() << " Polygons: " << structPolys.size() << std::endl;
+
 		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
 		/*std::vector<MyPolygon> structPolys = structure.getPolygons();
 		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
