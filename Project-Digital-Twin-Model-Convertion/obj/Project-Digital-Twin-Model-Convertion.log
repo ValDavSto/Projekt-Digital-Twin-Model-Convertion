@@ -1,9 +1,16 @@
-﻿  Gds2Import.cpp
+﻿  ICFactory.cpp
+  Test.cpp
+  Gds2Structure.cpp
+  IC.cpp
+  Layer.cpp
+  Polygon.cpp
+  Gds2Import.cpp
 C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(21,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(26,2): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(75,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(126,25): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(164,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(177,29): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(321,18): warning C4244: 'initializing': conversion from 'uintmax_t' to 'uint32_t', possible loss of data
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(71,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(122,25): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(160,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(171,29): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(230,18): warning C4244: 'initializing': conversion from 'uintmax_t' to 'uint32_t', possible loss of data
+  ImportInterface.cpp
+  Generating Code...
   Project-Digital-Twin-Model-Convertion.vcxproj -> C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.exe
