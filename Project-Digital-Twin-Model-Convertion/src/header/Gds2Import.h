@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include "Polygon.h"
+#include "Gds2Path.h"
 #include "StructRef.h"
 #include "Gds2Structure.h"
 class Gds2Import {
@@ -24,6 +25,7 @@ private:
 	std::vector<MyPolygon> getStrRefPolygons(Gds2Structure& str, std::map<std::string, Gds2Structure>& structMap, std::vector<MyPolygon>& polygons);
 	StructRef getStructRef();
 	MyPolygon getPolygon();
+	Gds2Path getPath();
 public:
 	Gds2Import();
 	Gds2Import(std::string filePath);

@@ -12,6 +12,9 @@
 #define SREF 0x0A00 // begin of an structure reference element, a copy of the referenced structure will be placed at the given coordinates
 #define SNAME 0x1206 // name of the referenced structure
 #define LAYER 0x0D02 // begin of a layer
+#define PATH 0x0900 // begin of path element
+#define PATHTYPE 0x2102 // type of the path element, 3 different path types ( type 0 is default type if none is specified)
+#define WIDTH 0x0f03 // width of the path
 #define XY 0x1003  // list of coordinates, each coordinate is a 4 byte long singed integer
 
 Gds2Import::Gds2Import() : readPosition(0) {}
@@ -152,6 +155,47 @@ MyPolygon Gds2Import::getPolygon() {
 	return poly;
 }
 
+Gds2Path Gds2Import::getPath() {
+	bool isPath = true;
+	bool containsLayer = false;
+	Gds2Path newPath = Gds2Path();
+	int i = readPosition;
+
+	while (isPath && i < filesize - 1) {
+		// i iterates through a boundary
+		if (getWordInt(data[i], data[i + 1]) == LAYER) { // 0D02 denotes a layer 
+			containsLayer = true;
+			newPath.setLayer((unsigned int)data[i + 3]);
+			//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
+		}
+
+		if (getWordInt(data[i], data[i + 1]) == PATHTYPE && containsLayer) {
+			newPath.setPathType((unsigned int)data[i + 3]);
+		}
+
+		if (getWordInt(data[i], data[i + 1]) == WIDTH && containsLayer) {
+			newPath.setWidth(getCoordinate(data[i + 2], data[i + 3], data[i + 4], data[i + 5]));
+		}
+
+		if (getWordInt(data[i], data[i + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
+
+			this->setReadPosition(i);
+			newPath.setCoordinates(getXY());
+
+			isPath = false;
+			containsLayer = false;
+		}
+
+		i++;
+	}
+
+
+	this->setReadPosition(i);
+
+	return newPath;
+}
+
+
 
 
 std::vector<Gds2Structure> Gds2Import::getStructures() {
@@ -160,8 +204,9 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 	bool isStruct = false;
 	std::vector<Gds2Structure> structures = {};
 	std::vector<StructRef> structureReferences = {};
+	std::vector<Gds2Path> paths = {};
 
-	for (int i = 0; i < filesize - 1; i++) {
+	for (int i = 0; i < filesize - 2; i++) {
 
 		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
 		if (getWordInt(data[i], data[i + 1]) == STRNAME) {
@@ -197,6 +242,12 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 						newStruct.addStuctRef(newStrRef);
 						strIt = this->getReadPosition();
 					}
+					else if (getWordInt(data[strIt], data[strIt + 1]) == PATH) {
+						this->setReadPosition(strIt);
+						Gds2Path newPath = getPath();
+						paths.push_back(newPath);
+						strIt = this->getReadPosition();
+					}
 				}
 				else { // end of structure
 					isStruct = false;
@@ -206,6 +257,7 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 
 				strIt++;
 			}
+			newStruct.setPaths(paths);
 			newStruct.setPolygons(structPolys);
 			structures.push_back(newStruct);
 

@@ -5,6 +5,7 @@
 #include <vector>
 #include "Polygon.h"
 #include "StructRef.h"
+#include "Gds2Path.h"
 
 
 
@@ -16,6 +17,7 @@ private:
 	std::string name;
 	std::vector<MyPolygon> polygons;
 	std::vector<StructRef> structureReferences;
+	std::vector<Gds2Path> paths;
 public:
 	Gds2Structure(std::string name, std::vector<MyPolygon> polygons);
 	Gds2Structure(std::string name);
@@ -27,6 +29,7 @@ public:
 
 	void setStructRef(std::vector<StructRef> structRef);
 	void setPolygons(std::vector<MyPolygon> polygons);
+	void setPaths(std::vector<Gds2Path> paths);
 	void addStuctRef(StructRef newStrRef);
 };
 

@@ -16,6 +16,8 @@ void Gds2Structure::setStructRef(std::vector<StructRef> structRef) { structureRe
 
 void Gds2Structure::setPolygons(std::vector<MyPolygon> polygons) { this->polygons = polygons; }
 
+void Gds2Structure::setPaths(std::vector<Gds2Path> paths) { this->paths = paths; }
+
 void Gds2Structure::addStuctRef(StructRef newStrRef){
 	structureReferences.push_back(newStrRef);
 }
