@@ -146,7 +146,7 @@ int main(int argc, char** argv)
 	std::list<BRepPrimAPI_MakePrism> prisms = create_IC(new_IC);
 
 	// visualize
-	for (auto prism : prisms)
+	for (auto& prism : prisms)
 	{
 		vout << prism;
 	}
@@ -166,7 +166,7 @@ BRepBuilderAPI_MakePolygon make_polygon(std::list<gp_Pnt> pnts)
 {
 	BRepBuilderAPI_MakePolygon polygon;
 
-	for (auto itr : pnts) {
+	for (auto& itr : pnts) {
 		polygon.Add(itr);
 	}
 
@@ -177,7 +177,7 @@ std::list<BRepBuilderAPI_MakePolygon> make_polygons(std::list<std::list<gp_Pnt>>
 {
 	std::list<BRepBuilderAPI_MakePolygon> polygons;
 
-	for (auto itr : pnts)
+	for (auto& itr : pnts)
 	{
 		polygons.push_back(make_polygon(itr));
 	}
@@ -193,7 +193,7 @@ std::list<BRepBuilderAPI_MakeFace> make_faces(std::list<BRepBuilderAPI_MakePolyg
 {
 	std::list<BRepBuilderAPI_MakeFace> faces;
 
-	for (auto itr : polygons) {
+	for (auto& itr : polygons) {
 		faces.push_back(make_face(itr));
 	}
 
@@ -205,7 +205,7 @@ BRepAlgoAPI_Fuse fuse_faces(std::list<BRepBuilderAPI_MakeFace> faces)
 	BRepAlgoAPI_Fuse fused_face(faces.front().Shape(), (++faces.begin())->Shape());
 
 	int i = 0;
-	for (auto itr : faces)
+	for (auto& itr : faces)
 	{
 		if (i >= 2)
 		{
@@ -221,7 +221,7 @@ std::list<BRepPrimAPI_MakePrism> create_IC(IC ic)
 	float height = 0;
 	std::list<BRepPrimAPI_MakePrism> prisms{};
 
-	for (auto layer : ic.getLayers())
+	for (auto& layer : ic.getLayers())
 	{
 		std::list<std::list<gp_Pnt>> pnts_of_layer{};
 		height += 150/*layer.getHeight()*/;

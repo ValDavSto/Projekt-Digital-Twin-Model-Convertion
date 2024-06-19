@@ -13,6 +13,7 @@
     <ClCompile Include="src\code\model\main.cpp" />
     <ClCompile Include="src\code\model\Viewer.cpp" />
     <ClCompile Include="src\code\model\ViewerInteractor.cpp" />
+    <ClCompile Include="src\code\datastructure\Gds2Path.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\header\Gds2Import.h" />
@@ -25,5 +26,6 @@
     <ClInclude Include="src\header\StructRef.h" />
     <ClInclude Include="src\header\Viewer.h" />
     <ClInclude Include="src\header\ViewerInteractor.h" />
+    <ClInclude Include="src\header\Gds2Path.h" />
   </ItemGroup>
 </Project>

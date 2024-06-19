@@ -1,15 +1,6 @@
-﻿  ICFactory.cpp
-  Test.cpp
-  Gds2Structure.cpp
-  Gds2Import.cpp
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(24,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(29,2): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(78,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(129,25): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(164,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(209,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(222,29): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(374,18): warning C4244: 'initializing': conversion from 'uintmax_t' to 'uint32_t', possible loss of data
-  Generating Code...
+﻿  Gds2Path.cpp
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(28,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(50,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(128,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
      Creating library C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.lib and object C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.exp
   Project-Digital-Twin-Model-Convertion.vcxproj -> C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.exe

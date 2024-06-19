@@ -4,16 +4,27 @@
 #include <vector>
 #include <string>
 #include "Layer.h"
+#include "Polygon.h"
 
 class Gds2Path {
 private:
-	int width; // width of the path
+	unsigned int width; // width of the path
 	unsigned int layer; 
 	unsigned int pathType;
 	std::vector<std::pair<int, int>> coordinates;
 
+	std::pair<int, int> calcVector(std::pair<int, int>& p1, std::pair<int, int>& p2);
+	std::pair<int, int> calcOffset(std::pair<int, int>& p1, std::pair<int, int>& p2);
+
+	
+
 
 public:
+	MyPolygon pathToPolygon();
+
+	unsigned int getWidth();
+	unsigned int getLayer();
+	std::vector<std::pair<int, int>> getCoordinates();
 	void setWidth(int width);
 	void setLayer(unsigned int layer);
 	void setPathType(unsigned int pathType);

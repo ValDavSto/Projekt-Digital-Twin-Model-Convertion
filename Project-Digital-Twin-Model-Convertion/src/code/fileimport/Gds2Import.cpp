@@ -340,6 +340,17 @@ std::vector<MyPolygon> Gds2Import::getPolygons() {
 		}
 
 
+		if (structure.getPaths().size() > 0) {
+			std::vector<MyPolygon> paths = {};
+
+			for (auto& path : structure.getPaths()) {
+				paths.push_back(path.pathToPolygon());
+			}
+
+			structPolys.insert(structPolys.end(), paths.begin(), paths.end());
+		}
+
+
 		std::cout << "Structure: " << structure.getName() << " Polygons: " << structPolys.size() << std::endl;
 
 		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());

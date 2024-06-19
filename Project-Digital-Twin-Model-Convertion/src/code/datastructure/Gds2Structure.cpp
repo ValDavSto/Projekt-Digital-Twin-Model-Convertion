@@ -12,6 +12,8 @@ std::vector<MyPolygon> Gds2Structure::getPolygons(){ return polygons; }
 
 std::vector<StructRef> Gds2Structure::getStructRef(){ return structureReferences; }
 
+std::vector<Gds2Path> Gds2Structure::getPaths(){ return paths; }
+
 void Gds2Structure::setStructRef(std::vector<StructRef> structRef) { structureReferences = structRef; }
 
 void Gds2Structure::setPolygons(std::vector<MyPolygon> polygons) { this->polygons = polygons; }

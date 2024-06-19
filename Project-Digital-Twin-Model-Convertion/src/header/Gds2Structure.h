@@ -26,6 +26,7 @@ public:
 	std::string getName();
 	std::vector<MyPolygon> getPolygons();
 	std::vector<StructRef> getStructRef();
+	std::vector<Gds2Path> getPaths();
 
 	void setStructRef(std::vector<StructRef> structRef);
 	void setPolygons(std::vector<MyPolygon> polygons);
