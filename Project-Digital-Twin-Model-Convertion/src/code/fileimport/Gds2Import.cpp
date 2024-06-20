@@ -17,7 +17,7 @@
 #define WIDTH 0x0f03 // width of the path
 #define XY 0x1003  // list of coordinates, each coordinate is a 4 byte long singed integer
 
-Gds2Import::Gds2Import() : readPosition(0) {}
+
 
 Gds2Import::Gds2Import(std::string filePath) {
 	data = readFileData(filePath);
@@ -25,7 +25,7 @@ Gds2Import::Gds2Import(std::string filePath) {
 	readPosition = 0;
 }
 
-inline void Gds2Import::checkSize(int x) {
+inline void Gds2Import::checkSize(unsigned int x) {
 	assert(x < filesize);
 }
 
@@ -53,10 +53,12 @@ std::string Gds2Import::getStructName(int readPosition) {
 	std::string structName(size, '\0');
 	readPosition += 2; // the received read position is at the first byte which denotes a STRNAME or SNAME (each 2 byte long). To read the string the program starts 2 bytes later at the first byte which represents a char
 	size -= 4; // size is reduced because it contains 2 bytes which contain the entry size and 2 bytes which are the STRNAME or SNAME tag
-
 	int strIt = 0;
 
+
 	for (strIt; strIt < size; strIt++) {
+		checkSize(readPosition); // assertion which checks if the filedata has coordIt bytes
+
 		structName[strIt] = static_cast<char>(data[readPosition]);
 		readPosition++;
 	}
@@ -68,6 +70,8 @@ std::vector<std::pair<int, int>> Gds2Import::getXY() {
 	int coordIt = readPosition + 2; // Position of the byte which is read from the filedata
 	std::vector<std::pair<int, int>> coordinates = {};
 
+	checkSize(coordIt); // assertion which checks if the filedata has coordIt bytes
+
 	//Print information about coordinates
 	//std::cout << "entry size: " << entrySize << " bytes" << std::endl;
 	//std::cout << "Position: " << coordIt << std::endl;
@@ -75,8 +79,9 @@ std::vector<std::pair<int, int>> Gds2Import::getXY() {
 	// extract coordinates of the boundary/polygon
 	// iterates over the coordinates
 	// entrySize is devided by 4, because each coordinate is 4 byte long and than by 2, because the coordinates are extracted in pairs
-	for (int i = 0; i < (entrySize / 4) / 2; i++) {
+	for (unsigned int i = 0; i < (entrySize / 4) / 2; i++) {
 		//std::cout << "Position: " << position << std::endl;
+		checkSize(coordIt + 7); // assertion which checks if the filedata has coordIt bytes
 
 		int x = getCoordinate(data[coordIt], data[coordIt + 1], data[coordIt + 2], data[coordIt + 3]);
 		int y = getCoordinate(data[coordIt + 4], data[coordIt + 5], data[coordIt + 6], data[coordIt + 7]);
@@ -98,6 +103,9 @@ StructRef Gds2Import::getStructRef() {
 	int i = readPosition;
 
 	while (isStructRef && readPosition < filesize) {
+
+		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+
 		if (getWordInt(data[i], data[i + 1]) == SNAME) {
 			strRefName = getStructName(i);
 			std::cout << "Structure Reference: " << strRefName << std::endl;
@@ -124,12 +132,16 @@ MyPolygon Gds2Import::getPolygon() {
 	bool isBoundary = true;
 	bool containsLayer = false;
 	MyPolygon poly = MyPolygon();
-	int i = readPosition;
+	unsigned int i = readPosition;
 
 	while (isBoundary && i < filesize - 1) {
+
+		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+
 		// i iterates through a boundary
 		if (getWordInt(data[i], data[i + 1]) == LAYER) { // 0D02 denotes a layer 
 			containsLayer = true;
+			checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
 			layer = (unsigned int)data[i + 3];
 			//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
 		}
@@ -159,12 +171,16 @@ Gds2Path Gds2Import::getPath() {
 	bool isPath = true;
 	bool containsLayer = false;
 	Gds2Path newPath = Gds2Path();
-	int i = readPosition;
+	unsigned i = readPosition;
 
 	while (isPath && i < filesize - 1) {
+
+		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+
 		// i iterates through a boundary
 		if (getWordInt(data[i], data[i + 1]) == LAYER) { // 0D02 denotes a layer 
 			containsLayer = true;
+			checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
 			newPath.setLayer((unsigned int)data[i + 3]);
 			//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
 		}
@@ -177,7 +193,7 @@ Gds2Path Gds2Import::getPath() {
 			newPath.setWidth(getCoordinate(data[i + 2], data[i + 3], data[i + 4], data[i + 5]));
 		}
 
-		if (getWordInt(data[i], data[i + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
+		if (getWordInt(data[i], data[i + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the path
 
 			this->setReadPosition(i);
 			newPath.setCoordinates(getXY());
@@ -198,6 +214,7 @@ Gds2Path Gds2Import::getPath() {
 
 
 
+
 std::vector<Gds2Structure> Gds2Import::getStructures() {
 
 	std::vector<MyPolygon> polygons = {};
@@ -206,14 +223,15 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 	std::vector<StructRef> structureReferences = {};
 	std::vector<Gds2Path> paths = {};
 
-	for (int i = 0; i < filesize - 2; i++) {
+	//TODO: Prüfen ob die Begrenzung sinn ergibt
+	for (unsigned int i = 0; i < filesize - 3; i++) {
 
 		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
 		if (getWordInt(data[i], data[i + 1]) == STRNAME) {
 			isStruct = true;
 			int elementSize = getWordInt(data[i - 2], data[i - 1]);
 			std::string structName = getStructName(i);
-			int strIt = i + elementSize - 1; // StructureIterator skips unimportant information of the STRNAME element
+			unsigned int strIt = i + elementSize - 1; // StructureIterator skips unimportant information of the STRNAME element
 			Gds2Structure newStruct(structName); // create empty structure
 			std::vector<MyPolygon> structPolys = {};
 
@@ -265,7 +283,7 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 		// In the case that a boundary or strRef is not a part of struct there will be added in this section
 		// !!! TODO currently they will be not returned by this method, this has to be added
 
-
+		checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
 		if (getWordInt(data[i], data[i + 1]) == BOUNDARY && getWordInt(data[i + 2], data[i + 3]) == LAYER) {
 			this->setReadPosition(i);
 			MyPolygon newPol = getPolygon();
@@ -275,6 +293,7 @@ std::vector<Gds2Structure> Gds2Import::getStructures() {
 			std::cout << "Boundary added!" << std::endl;
 		}
 
+		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
 		if (getWordInt(data[i], data[i + 1]) == SREF) {
 			this->setReadPosition(i);
 			StructRef newStrRef = getStructRef();

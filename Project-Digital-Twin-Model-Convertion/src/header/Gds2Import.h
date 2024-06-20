@@ -14,7 +14,7 @@ private:
 	std::vector<std::byte> data;
 	uint32_t filesize;
 
-	inline void checkSize(int x);
+	inline void checkSize(unsigned int x);
 	uint32_t getReadPosition();
 	void setReadPosition(uint32_t currentPosition);
 	int getWordInt(std::byte a, std::byte b);

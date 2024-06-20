@@ -134,6 +134,7 @@ IC testIC();
 int main(int argc, char** argv)
 {
 	std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\nand2.gds)";
+	//std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\1Kpolyg.gds)";
 	IC new_IC = ICFactory::generateIC("Test", path);
 
 	// create window

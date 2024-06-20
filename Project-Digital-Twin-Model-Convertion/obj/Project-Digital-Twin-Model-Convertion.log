@@ -1,6 +1,2 @@
-﻿  Gds2Path.cpp
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(28,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(50,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(128,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-     Creating library C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.lib and object C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.exp
+﻿  Test.cpp
   Project-Digital-Twin-Model-Convertion.vcxproj -> C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.exe
