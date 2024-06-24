@@ -102,22 +102,7 @@ StructRef Gds2Import::getStructRef() {
 	std::pair<int, int> coordinates = std::make_pair(0, 0);
 	int i = readPosition;
 
-	//while (isStructRef && readPosition < filesize) {
-
-	//	checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
-
-	//	if (getWordInt(data[i], data[i + 1]) == SNAME) {
-	//		strRefName = getStructName(i);
-	//		std::cout << "Structure Reference: " << strRefName << std::endl;
-	//	}
-	//	if (getWordInt(data[i], data[i + 1]) == XY) {
-	//		this->setReadPosition(i);
-	//		coordinates = getXY()[0]; // strRef only contain one set of coordinates at which a copy of the referenced structure is placed
-	//		isStructRef = false;
-	//	}
-	//	i++;
-	//}
-
+	
 	while (isStructRef && readPosition < filesize) {
 		int elementSize = getWordInt(data[i - 2], data[i - 1]);
 		int tag = getWordInt(data[i], data[i + 1]);
@@ -152,33 +137,6 @@ MyPolygon Gds2Import::getPolygon() {
 	MyPolygon poly = MyPolygon();
 	unsigned int i = readPosition;
 
-	//while (isBoundary && i < filesize - 1) {
-
-	//	checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
-	//	int elementSize = getWordInt(data[i - 2], data[i - 1]);
-
-	//	// i iterates through a boundary
-	//	if (getWordInt(data[i], data[i + 1]) == LAYER) { // 0D02 denotes a layer 
-	//		containsLayer = true;
-	//		checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
-	//		layer = (unsigned int)data[i + 3];
-	//		//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
-	//	}
-
-	//	if (getWordInt(data[i], data[i + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
-
-	//		this->setReadPosition(i);
-	//		std::vector<std::pair<int, int>> coordinates = getXY();
-
-	//		isBoundary = false;
-	//		containsLayer = false;
-
-	//		poly.setCoordinates(coordinates);
-	//		poly.setLayer(layer);
-	//	}
-
-	//	i++;
-	//}
 
 	while (isBoundary) {
 		int elementSize = getWordInt(data[i - 2], data[i - 1]);
@@ -485,27 +443,7 @@ std::vector<MyPolygon> Gds2Import::getPolygons() {
 		std::cout << "Structure: " << structure.getName() << " Polygons: " << structPolys.size() << " StrRef: " << structure.getStructRef().size() <<std::endl;
 
 		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
-		/*std::vector<MyPolygon> structPolys = structure.getPolygons();
-		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
-
-		for (auto& strRef : structure.getStructRef()) {
-			std::pair<int, int> placement = strRef.getCoordinates();
-			Gds2Structure referencedStruct = structMap[strRef.getName()];
-			std::vector<MyPolygon> refPoly = referencedStruct.getPolygons();
-
-			for (auto& polygon : refPoly) {
-				std::vector<std::pair<int, int>> coords = polygon.getCoordinates();
-				std::vector<std::pair<int, int>> newCoords = {};
-
-				for (auto& xy : coords) {
-					xy = std::make_pair(xy.first + placement.first, xy.second + placement.second);
-					newCoords.push_back(xy);
-				}
-				polygon.setCoordinates(newCoords);
-				polygons.push_back(polygon);
-
-			}
-		}*/
+		
 	}
 
 	return polygons;
