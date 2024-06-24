@@ -26,12 +26,15 @@ private:
 	StructRef getStructRef();
 	MyPolygon getPolygon();
 	Gds2Path getPath();
+	Gds2Structure getStruct(uint32_t rP);
 public:
 	Gds2Import();
 	Gds2Import(std::string filePath);
 	std::vector<Gds2Structure> getStructures();
 	std::vector<std::byte> readFileData(const std::string& name);
 	std::vector<MyPolygon> getPolygons();
+	void printTagCount();
+	std::vector<Gds2Structure> getModelData();
 
 };
 #endif

@@ -102,20 +102,37 @@ StructRef Gds2Import::getStructRef() {
 	std::pair<int, int> coordinates = std::make_pair(0, 0);
 	int i = readPosition;
 
+	//while (isStructRef && readPosition < filesize) {
+
+	//	checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+
+	//	if (getWordInt(data[i], data[i + 1]) == SNAME) {
+	//		strRefName = getStructName(i);
+	//		std::cout << "Structure Reference: " << strRefName << std::endl;
+	//	}
+	//	if (getWordInt(data[i], data[i + 1]) == XY) {
+	//		this->setReadPosition(i);
+	//		coordinates = getXY()[0]; // strRef only contain one set of coordinates at which a copy of the referenced structure is placed
+	//		isStructRef = false;
+	//	}
+	//	i++;
+	//}
+
 	while (isStructRef && readPosition < filesize) {
+		int elementSize = getWordInt(data[i - 2], data[i - 1]);
+		int tag = getWordInt(data[i], data[i + 1]);
 
-		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
-
-		if (getWordInt(data[i], data[i + 1]) == SNAME) {
+		if (tag == SNAME) {
 			strRefName = getStructName(i);
 			std::cout << "Structure Reference: " << strRefName << std::endl;
 		}
-		if (getWordInt(data[i], data[i + 1]) == XY) {
+		else if (tag == XY) {
 			this->setReadPosition(i);
 			coordinates = getXY()[0]; // strRef only contain one set of coordinates at which a copy of the referenced structure is placed
 			isStructRef = false;
 		}
-		i++;
+
+		i += elementSize;
 	}
 
 	StructRef strRef = StructRef(strRefName, coordinates);
@@ -127,6 +144,7 @@ StructRef Gds2Import::getStructRef() {
 
 }
 
+// This method generates an polygon object which is based on a gds2 boundary
 MyPolygon Gds2Import::getPolygon() {
 	unsigned int layer = 0;
 	bool isBoundary = true;
@@ -134,34 +152,59 @@ MyPolygon Gds2Import::getPolygon() {
 	MyPolygon poly = MyPolygon();
 	unsigned int i = readPosition;
 
-	while (isBoundary && i < filesize - 1) {
+	//while (isBoundary && i < filesize - 1) {
 
-		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+	//	checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+	//	int elementSize = getWordInt(data[i - 2], data[i - 1]);
 
-		// i iterates through a boundary
-		if (getWordInt(data[i], data[i + 1]) == LAYER) { // 0D02 denotes a layer 
-			containsLayer = true;
+	//	// i iterates through a boundary
+	//	if (getWordInt(data[i], data[i + 1]) == LAYER) { // 0D02 denotes a layer 
+	//		containsLayer = true;
+	//		checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
+	//		layer = (unsigned int)data[i + 3];
+	//		//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
+	//	}
+
+	//	if (getWordInt(data[i], data[i + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
+
+	//		this->setReadPosition(i);
+	//		std::vector<std::pair<int, int>> coordinates = getXY();
+
+	//		isBoundary = false;
+	//		containsLayer = false;
+
+	//		poly.setCoordinates(coordinates);
+	//		poly.setLayer(layer);
+	//	}
+
+	//	i++;
+	//}
+
+	while (isBoundary) {
+		int elementSize = getWordInt(data[i - 2], data[i - 1]);
+		int tag = getWordInt(data[i], data[i + 1]);
+
+		if (tag == LAYER) { // 0D02 denotes a layer 
 			checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
 			layer = (unsigned int)data[i + 3];
 			//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
 		}
-
-		if (getWordInt(data[i], data[i + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the boundary/polygon
-
+		else if(tag == XY){
 			this->setReadPosition(i);
 			std::vector<std::pair<int, int>> coordinates = getXY();
 
 			isBoundary = false;
-			containsLayer = false;
 
 			poly.setCoordinates(coordinates);
 			poly.setLayer(layer);
+
 		}
 
-		i++;
+		i += elementSize;
+
 	}
 
-
+	//std::cout << i << std::endl;
 	this->setReadPosition(i);
 
 	return poly;
@@ -177,23 +220,26 @@ Gds2Path Gds2Import::getPath() {
 
 		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
 
+		int elementSize = getWordInt(data[i - 2], data[i - 1]);
+		int tag = getWordInt(data[i], data[i + 1]);
+
 		// i iterates through a boundary
-		if (getWordInt(data[i], data[i + 1]) == LAYER) { // 0D02 denotes a layer 
+		if (tag == LAYER) { // 0D02 denotes a layer 
 			containsLayer = true;
 			checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
 			newPath.setLayer((unsigned int)data[i + 3]);
 			//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
 		}
 
-		if (getWordInt(data[i], data[i + 1]) == PATHTYPE && containsLayer) {
+		else if (tag == PATHTYPE && containsLayer) {
 			newPath.setPathType((unsigned int)data[i + 3]);
 		}
 
-		if (getWordInt(data[i], data[i + 1]) == WIDTH && containsLayer) {
+		else if (tag == WIDTH && containsLayer) {
 			newPath.setWidth(getCoordinate(data[i + 2], data[i + 3], data[i + 4], data[i + 5]));
 		}
 
-		if (getWordInt(data[i], data[i + 1]) == XY && containsLayer) { // 1003 denotes the xy coordinates of the path
+		else if (tag == XY && containsLayer) { // 1003 denotes the xy coordinates of the path
 
 			this->setReadPosition(i);
 			newPath.setCoordinates(getXY());
@@ -202,13 +248,77 @@ Gds2Path Gds2Import::getPath() {
 			containsLayer = false;
 		}
 
-		i++;
+		i += elementSize;
 	}
 
 
 	this->setReadPosition(i);
 
 	return newPath;
+}
+
+Gds2Structure Gds2Import::getStruct(uint32_t rP){
+	bool isStruct = true;
+	int strNameSize = getWordInt(data[rP - 2], data[rP - 1]);
+	std::string structName = getStructName(rP);
+	Gds2Structure newStruct(structName); // create empty structure
+	std::vector<MyPolygon> structPolys = {};
+	uint32_t strIt = rP + strNameSize;
+	std::vector<Gds2Path> paths = {};
+
+	while (strIt < filesize - 2 && isStruct) {
+		int elementSize = getWordInt(data[strIt - 2], data[strIt - 1]);
+		int tag = getWordInt(data[strIt], data[strIt + 1]);
+
+		switch (tag) {
+		case BOUNDARY: {
+			this->setReadPosition(strIt); // set current read position for the gePolygon method
+			MyPolygon newPol = getPolygon();
+
+			structPolys.push_back(newPol);
+			strIt = this->getReadPosition(); // is needed because the read position changed during the getPolygon method
+			break;
+		}
+
+		case SREF: {
+			//same principle as getting a polygon see above
+			this->setReadPosition(strIt);
+			StructRef newStrRef = getStructRef();
+			newStruct.addStuctRef(newStrRef);
+			strIt = this->getReadPosition();
+
+			break;
+		}
+			
+
+		case PATH: {
+			this->setReadPosition(strIt);
+			Gds2Path newPath = getPath();
+			paths.push_back(newPath);
+			strIt = this->getReadPosition();
+
+			break;
+		}
+
+		case ENDSTR: {
+			isStruct = false;
+			this->setReadPosition(strIt + elementSize);
+			strIt += elementSize;
+			break;
+		}
+		default:
+			strIt += elementSize;
+			break;
+		}
+		
+	}
+
+
+
+	newStruct.setPaths(paths);
+	newStruct.setPolygons(structPolys);
+
+	return newStruct;
 }
 
 
@@ -341,7 +451,7 @@ std::vector<MyPolygon> Gds2Import::getStrRefPolygons(Gds2Structure& structure, s
 
 
 std::vector<MyPolygon> Gds2Import::getPolygons() {
-	std::vector<Gds2Structure> structures = getStructures();
+	std::vector<Gds2Structure> structures = getModelData();
 	std::vector<MyPolygon> polygons = {};
 	std::map<std::string, Gds2Structure> structMap = {};
 
@@ -350,6 +460,7 @@ std::vector<MyPolygon> Gds2Import::getPolygons() {
 	}
 
 	for (auto& structure : structures) {
+		std::cout << "Structure: " << structure.getName() << " Polygons: " << structure.getPolygons().size() << " StrRef: " << structure.getStructRef().size() << std::endl;
 		std::vector<MyPolygon> structPolys = structure.getPolygons();
 		std::vector<MyPolygon> emptyVec = {};
 
@@ -358,6 +469,7 @@ std::vector<MyPolygon> Gds2Import::getPolygons() {
 			structPolys.insert(structPolys.end(), strRefPolys.begin(), strRefPolys.end());
 		}
 
+		std::cout << "Structure: " << structure.getName() << " Polygons: " << structPolys.size() << " StrRef: " << structure.getStructRef().size() << std::endl;
 
 		if (structure.getPaths().size() > 0) {
 			std::vector<MyPolygon> paths = {};
@@ -370,7 +482,7 @@ std::vector<MyPolygon> Gds2Import::getPolygons() {
 		}
 
 
-		std::cout << "Structure: " << structure.getName() << " Polygons: " << structPolys.size() << std::endl;
+		std::cout << "Structure: " << structure.getName() << " Polygons: " << structPolys.size() << " StrRef: " << structure.getStructRef().size() <<std::endl;
 
 		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
 		/*std::vector<MyPolygon> structPolys = structure.getPolygons();
@@ -397,6 +509,69 @@ std::vector<MyPolygon> Gds2Import::getPolygons() {
 	}
 
 	return polygons;
+}
+
+// This methods parses the file by starting at the first tag and than skips the given tag size. When the tag is included in the tag map the according data is extracted from the gds2 file
+std::vector<Gds2Structure> Gds2Import::getModelData() {
+	std::vector<Gds2Structure> structures = {};
+	std::map<int, int> tags;
+	tags[0x0606] = 0; //STRNAME
+
+	uint32_t i = 2; // i is 2 because the first two bytes of a gds2 file denote the size of the first tag (header-tag)
+
+	while (i < filesize - 2) {
+		int tag = getWordInt(data[i], data[i + 1]);
+		int elementSize = getWordInt(data[i - 2], data[i - 1]);
+
+		if (tags.count(tag) == 1) {
+			Gds2Structure newStruct = getStruct(i);
+			structures.push_back(newStruct);
+
+			i = this->getReadPosition();
+		}
+		else {
+			if (elementSize == 0) {
+				i++;
+			}
+
+			i += elementSize;
+		}
+	}
+
+	return structures;
+}
+
+void Gds2Import::printTagCount() {
+	std::map<int, int> tags;
+	tags[0x0606] = 0; //STRNAME
+	//tags[0x0A00] = 0; //SREF
+	//tags[0x0900] = 0; //PATH
+	//tags[0x0800] = 0; //BOUNDARY
+
+	
+	int i = 2;
+
+	while (i < filesize - 2) {
+		int tag = getWordInt(data[i], data[i + 1]);
+
+		if (tags.count(tag) == 1) {
+			tags[tag] += 1;
+		}
+
+		int elementSize = getWordInt(data[i - 2], data[i - 1]);
+
+
+		if (elementSize == 0) {
+			std::cout << tag << ": " << elementSize << std::endl;
+			i++;
+		}
+
+		i += elementSize;
+	}
+
+	for (auto& pair : tags) {
+		std::cout << pair.first << ": " << pair.second << std::endl;
+	}
 }
 
 std::vector<std::byte> Gds2Import::readFileData(const std::string& name) {
