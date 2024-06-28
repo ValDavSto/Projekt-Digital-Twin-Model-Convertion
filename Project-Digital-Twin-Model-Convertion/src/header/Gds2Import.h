@@ -30,10 +30,8 @@ private:
 public:
 	Gds2Import();
 	Gds2Import(std::string filePath);
-	std::vector<Gds2Structure> getStructures();
 	std::vector<std::byte> readFileData(const std::string& name);
 	std::vector<MyPolygon> getPolygons();
-	void printTagCount();
 	std::vector<Gds2Structure> getModelData();
 
 };
