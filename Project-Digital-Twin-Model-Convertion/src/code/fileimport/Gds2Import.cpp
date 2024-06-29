@@ -23,17 +23,11 @@
 Gds2Import::Gds2Import(std::string filePath) {
 	data = readFileData(filePath);
 	filesize = data.size();
-	readPosition = 0;
 }
 
 inline void Gds2Import::checkSize(unsigned int x) {
 	assert(x < filesize);
 }
-
-
-uint32_t Gds2Import::getReadPosition() { return readPosition; }
-
-void Gds2Import::setReadPosition(uint32_t currentPosition) { readPosition = currentPosition; }
 
 // takes 2 std::byte objects, add them together and converts them into an int (unsigned)
 int Gds2Import::getWordInt(std::byte a, std::byte b) {
@@ -49,49 +43,49 @@ int Gds2Import::getElemSize(std::byte a, std::byte b) {
 	return getWordInt(a, b) / 2;
 }
 
-std::string Gds2Import::getStructName(int readPosition) {
-	int size = getWordInt(data[readPosition - 2], data[readPosition - 1]);
+std::string Gds2Import::getStructName(uint32_t rp) {
+	int size = getWordInt(data[rp - 2], data[rp - 1]);
 	std::string structName(size, '\0');
-	readPosition += 2; // the received read position is at the first byte which denotes a STRNAME or SNAME (each 2 byte long). To read the string the program starts 2 bytes later at the first byte which represents a char
+	rp += 2; // the received read position is at the first byte which denotes a STRNAME or SNAME (each 2 byte long). To read the string the program starts 2 bytes later at the first byte which represents a char
 	size -= 4; // size is reduced because it contains 2 bytes which contain the entry size and 2 bytes which are the STRNAME or SNAME tag
 	int strIt = 0;
 
 
 	for (strIt; strIt < size; strIt++) {
-		checkSize(readPosition); // assertion which checks if the filedata has coordIt bytes
+		checkSize(rp); // assertion which checks if the filedata has coordIt bytes
 
-		structName[strIt] = static_cast<char>(data[readPosition]);
-		readPosition++;
+		structName[strIt] = static_cast<char>(data[rp]);
+		rp++;
 	}
 	return structName;
 }
 
-std::vector<std::pair<int, int>> Gds2Import::getXY() {
-	unsigned int entrySize = getWordInt(data[readPosition - 2], data[readPosition - 1]) - 4; // the word before the start of the xy coordinates denotes the number of coordinates; 4 is subtracted because 2 bytes are occupied by the XY-tag and 2 by the entrysize
-	int coordIt = readPosition + 2; // Position of the byte which is read from the filedata
+std::vector<std::pair<int, int>> Gds2Import::getXY(uint32_t rp) {
+	unsigned int entrySize = getWordInt(data[rp - 2], data[rp - 1]) - 4; // the word before the start of the xy coordinates denotes the number of coordinates; 4 is subtracted because 2 bytes are occupied by the XY-tag and 2 by the entrysize
+	rp += 2; // Position of the byte which is read from the filedata
 	std::vector<std::pair<int, int>> coordinates = {};
 
-	checkSize(coordIt); // assertion which checks if the filedata has coordIt bytes
+	checkSize(rp); // assertion which checks if the filedata has rp bytes
 
 	//Print information about coordinates
 	//std::cout << "entry size: " << entrySize << " bytes" << std::endl;
-	//std::cout << "Position: " << coordIt << std::endl;
+	//std::cout << "Position: " << rp << std::endl;
 
 	// extract coordinates of the boundary/polygon
 	// iterates over the coordinates
 	// entrySize is devided by 4, because each coordinate is 4 byte long and than by 2, because the coordinates are extracted in pairs
 	for (unsigned int i = 0; i < (entrySize / 4) / 2; i++) {
 		//std::cout << "Position: " << position << std::endl;
-		checkSize(coordIt + 7); // assertion which checks if the filedata has coordIt bytes
+		checkSize(rp + 7); // assertion which checks if the filedata has rp bytes
 
-		int x = getCoordinate(data[coordIt], data[coordIt + 1], data[coordIt + 2], data[coordIt + 3]);
-		int y = getCoordinate(data[coordIt + 4], data[coordIt + 5], data[coordIt + 6], data[coordIt + 7]);
+		int x = getCoordinate(data[rp], data[rp + 1], data[rp + 2], data[rp + 3]);
+		int y = getCoordinate(data[rp + 4], data[rp + 5], data[rp + 6], data[rp + 7]);
 
 		//std::cout << "xy: (" << x << ", " << y << ")" << std::endl;
 
 		std::pair<int, int> xy = std::make_pair(x, y);
 		coordinates.push_back(xy);
-		coordIt += 8;
+		rp += 8;
 	}
 
 	return coordinates;
@@ -103,7 +97,7 @@ StructRef Gds2Import::getStructRef(uint32_t& rp) {
 	std::pair<int, int> coordinates = std::make_pair(0, 0);
 
 	
-	while (isStructRef && readPosition < filesize) {
+	while (isStructRef && rp < filesize) {
 		int elementSize = getWordInt(data[rp - 2], data[rp - 1]);
 		int tag = getWordInt(data[rp], data[rp + 1]);
 
@@ -112,8 +106,7 @@ StructRef Gds2Import::getStructRef(uint32_t& rp) {
 			std::cout << "Structure Reference: " << strRefName << std::endl;
 		}
 		else if (tag == XY) {
-			this->setReadPosition(rp);
-			coordinates = getXY()[0]; // strRef only contain one set of coordinates at which a copy of the referenced structure is placed
+			coordinates = getXY(rp)[0]; // strRef only contain one set of coordinates at which a copy of the referenced structure is placed
 			isStructRef = false;
 		}
 
@@ -146,8 +139,7 @@ MyPolygon Gds2Import::getPolygon(uint32_t& rp) {
 			//std::cout << "Layer: " << (unsigned int)data[rp + 3] << std::endl;
 		}
 		else if(tag == XY){
-			this->setReadPosition(rp);
-			std::vector<std::pair<int, int>> coordinates = getXY();
+			std::vector<std::pair<int, int>> coordinates = getXY(rp);
 
 			isBoundary = false;
 
@@ -165,7 +157,6 @@ MyPolygon Gds2Import::getPolygon(uint32_t& rp) {
 
 Gds2Path Gds2Import::getPath(uint32_t& rp) {
 	bool isPath = true;
-	bool containsLayer = false;
 	Gds2Path newPath = Gds2Path();
 
 	while (isPath && rp < filesize - 1) {
@@ -177,27 +168,23 @@ Gds2Path Gds2Import::getPath(uint32_t& rp) {
 
 		// rp iterates through a boundary
 		if (tag == LAYER) { // 0D02 denotes a layer 
-			containsLayer = true;
 			checkSize(rp + 3); // assertion which checks if the filedata has i+3 bytes
 			newPath.setLayer((unsigned int)data[rp + 3]);
 			//std::cout << "Layer: " << (unsigned int)data[rp + 3] << std::endl;
 		}
 
-		else if (tag == PATHTYPE && containsLayer) {
+		else if (tag == PATHTYPE) {
 			newPath.setPathType((unsigned int)data[rp + 3]);
 		}
 
-		else if (tag == WIDTH && containsLayer) {
+		else if (tag == WIDTH) {
 			newPath.setWidth(getCoordinate(data[rp + 2], data[rp + 3], data[rp + 4], data[rp + 5]));
 		}
 
-		else if (tag == XY && containsLayer) { // 1003 denotes the xy coordinates of the path
-
-			this->setReadPosition(rp);
-			newPath.setCoordinates(getXY());
+		else if (tag == XY) { // 1003 denotes the xy coordinates of the path
+			newPath.setCoordinates(getXY(rp));
 
 			isPath = false;
-			containsLayer = false;
 		}
 
 		rp += elementSize;
@@ -356,8 +343,6 @@ std::vector<Gds2Structure> Gds2Import::getModelData() {
 			case STRNAME: {
 				Gds2Structure newStruct = getStruct(i);
 				structures.push_back(newStruct);
-
-				i = this->getReadPosition();
 				break;
 			}
 
