@@ -5,7 +5,7 @@
     <ClCompile Include="src\code\datastructure\IC.cpp" />
     <ClCompile Include="src\code\datastructure\Layer.cpp" />
     <ClCompile Include="src\code\datastructure\Polygon.cpp" />
-    <ClCompile Include="src\code\Test.cpp" />
+    <ClCompile Include="src\code\Main.cpp" />
     <ClCompile Include="src\code\fileimport\ImportInterface.cpp" />
     <ClCompile Include="src\code\fileimport\Gds2Import.cpp" />
     <ClCompile Include="src\code\datastructure\Gds2Structure.cpp" />

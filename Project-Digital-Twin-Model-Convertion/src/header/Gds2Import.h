@@ -23,10 +23,10 @@ private:
 	std::string getStructName(int readPosition);
 	std::vector<std::pair<int, int>> getXY();
 	std::vector<MyPolygon> getStrRefPolygons(Gds2Structure& str, std::map<std::string, Gds2Structure>& structMap, std::vector<MyPolygon>& polygons);
-	StructRef getStructRef();
-	MyPolygon getPolygon();
-	Gds2Path getPath();
-	Gds2Structure getStruct(uint32_t rP);
+	StructRef getStructRef(uint32_t& readPosition);
+	MyPolygon getPolygon(uint32_t& readPosition);
+	Gds2Path getPath(uint32_t& readPosition);
+	Gds2Structure getStruct(uint32_t& readPosition);
 public:
 	Gds2Import();
 	Gds2Import(std::string filePath);

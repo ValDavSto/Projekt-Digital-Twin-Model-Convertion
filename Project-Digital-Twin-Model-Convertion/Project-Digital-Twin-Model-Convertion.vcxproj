@@ -30,7 +30,7 @@
     <ClCompile Include="src\code\model\main.cpp" />
     <ClCompile Include="src\code\model\Viewer.cpp" />
     <ClCompile Include="src\code\model\ViewerInteractor.cpp" />
-    <ClCompile Include="src\code\Test.cpp" />
+    <ClCompile Include="src\code\Main.cpp" />
     <ClCompile Include="src\code\datastructure\StructRef.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,7 @@
 #define PATHTYPE 0x2102 // type of the path element, 3 different path types ( type 0 is default type if none is specified)
 #define WIDTH 0x0f03 // width of the path
 #define XY 0x1003  // list of coordinates, each coordinate is a 4 byte long singed integer
+#define BOX 0x2D00
 
 
 
@@ -96,59 +97,56 @@ std::vector<std::pair<int, int>> Gds2Import::getXY() {
 	return coordinates;
 }
 
-StructRef Gds2Import::getStructRef() {
+StructRef Gds2Import::getStructRef(uint32_t& rp) {
 	bool isStructRef = true;
 	std::string strRefName = "";
 	std::pair<int, int> coordinates = std::make_pair(0, 0);
-	int i = readPosition;
 
 	
 	while (isStructRef && readPosition < filesize) {
-		int elementSize = getWordInt(data[i - 2], data[i - 1]);
-		int tag = getWordInt(data[i], data[i + 1]);
+		int elementSize = getWordInt(data[rp - 2], data[rp - 1]);
+		int tag = getWordInt(data[rp], data[rp + 1]);
 
 		if (tag == SNAME) {
-			strRefName = getStructName(i);
+			strRefName = getStructName(rp);
 			std::cout << "Structure Reference: " << strRefName << std::endl;
 		}
 		else if (tag == XY) {
-			this->setReadPosition(i);
+			this->setReadPosition(rp);
 			coordinates = getXY()[0]; // strRef only contain one set of coordinates at which a copy of the referenced structure is placed
 			isStructRef = false;
 		}
 
-		i += elementSize;
+		rp += elementSize;
 	}
 
 	StructRef strRef = StructRef(strRefName, coordinates);
 	std::cout << strRef.getCoordinates().first << " " << strRef.getCoordinates().second << std::endl;
 
 
-	this->setReadPosition(i);
 	return StructRef(strRefName, coordinates);
 
 }
 
 // This method generates an polygon object which is based on a gds2 boundary
-MyPolygon Gds2Import::getPolygon() {
+MyPolygon Gds2Import::getPolygon(uint32_t& rp) {
 	unsigned int layer = 0;
 	bool isBoundary = true;
 	bool containsLayer = false;
 	MyPolygon poly = MyPolygon();
-	unsigned int i = readPosition;
 
 
 	while (isBoundary) {
-		int elementSize = getWordInt(data[i - 2], data[i - 1]);
-		int tag = getWordInt(data[i], data[i + 1]);
+		int elementSize = getWordInt(data[rp - 2], data[rp - 1]);
+		int tag = getWordInt(data[rp], data[rp + 1]);
 
 		if (tag == LAYER) { // 0D02 denotes a layer 
-			checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
-			layer = (unsigned int)data[i + 3];
-			//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
+			checkSize(rp + 3); // assertion which checks if the filedata has i+3 bytes
+			layer = (unsigned int)data[rp + 3];
+			//std::cout << "Layer: " << (unsigned int)data[rp + 3] << std::endl;
 		}
 		else if(tag == XY){
-			this->setReadPosition(i);
+			this->setReadPosition(rp);
 			std::vector<std::pair<int, int>> coordinates = getXY();
 
 			isBoundary = false;
@@ -158,119 +156,97 @@ MyPolygon Gds2Import::getPolygon() {
 
 		}
 
-		i += elementSize;
+		rp += elementSize;
 
 	}
-
-	//std::cout << i << std::endl;
-	this->setReadPosition(i);
 
 	return poly;
 }
 
-Gds2Path Gds2Import::getPath() {
+Gds2Path Gds2Import::getPath(uint32_t& rp) {
 	bool isPath = true;
 	bool containsLayer = false;
 	Gds2Path newPath = Gds2Path();
-	unsigned i = readPosition;
 
-	while (isPath && i < filesize - 1) {
+	while (isPath && rp < filesize - 1) {
 
-		checkSize(i + 1); // assertion which checks if the filedata has i+1 bytes
+		checkSize(rp + 1); // assertion which checks if the filedata has i+1 bytes
 
-		int elementSize = getWordInt(data[i - 2], data[i - 1]);
-		int tag = getWordInt(data[i], data[i + 1]);
+		int elementSize = getWordInt(data[rp - 2], data[rp - 1]);
+		int tag = getWordInt(data[rp], data[rp + 1]);
 
-		// i iterates through a boundary
+		// rp iterates through a boundary
 		if (tag == LAYER) { // 0D02 denotes a layer 
 			containsLayer = true;
-			checkSize(i + 3); // assertion which checks if the filedata has i+3 bytes
-			newPath.setLayer((unsigned int)data[i + 3]);
-			//std::cout << "Layer: " << (unsigned int)data[i + 3] << std::endl;
+			checkSize(rp + 3); // assertion which checks if the filedata has i+3 bytes
+			newPath.setLayer((unsigned int)data[rp + 3]);
+			//std::cout << "Layer: " << (unsigned int)data[rp + 3] << std::endl;
 		}
 
 		else if (tag == PATHTYPE && containsLayer) {
-			newPath.setPathType((unsigned int)data[i + 3]);
+			newPath.setPathType((unsigned int)data[rp + 3]);
 		}
 
 		else if (tag == WIDTH && containsLayer) {
-			newPath.setWidth(getCoordinate(data[i + 2], data[i + 3], data[i + 4], data[i + 5]));
+			newPath.setWidth(getCoordinate(data[rp + 2], data[rp + 3], data[rp + 4], data[rp + 5]));
 		}
 
 		else if (tag == XY && containsLayer) { // 1003 denotes the xy coordinates of the path
 
-			this->setReadPosition(i);
+			this->setReadPosition(rp);
 			newPath.setCoordinates(getXY());
 
 			isPath = false;
 			containsLayer = false;
 		}
 
-		i += elementSize;
+		rp += elementSize;
 	}
-
-
-	this->setReadPosition(i);
 
 	return newPath;
 }
 
-Gds2Structure Gds2Import::getStruct(uint32_t rP){
+Gds2Structure Gds2Import::getStruct(uint32_t& rp){
 	bool isStruct = true;
-	int strNameSize = getWordInt(data[rP - 2], data[rP - 1]);
-	std::string structName = getStructName(rP);
+	int strNameSize = getWordInt(data[rp - 2], data[rp - 1]);
+	std::string structName = getStructName(rp);
 	Gds2Structure newStruct(structName); // create empty structure
 	std::vector<MyPolygon> structPolys = {};
-	uint32_t strIt = rP + strNameSize;
+	rp += strNameSize;
 	std::vector<Gds2Path> paths = {};
 
-	while (strIt < filesize - 2 && isStruct) {
-		int elementSize = getWordInt(data[strIt - 2], data[strIt - 1]);
-		int tag = getWordInt(data[strIt], data[strIt + 1]);
+	while (rp < filesize - 2 && isStruct) {
+		int elementSize = getWordInt(data[rp - 2], data[rp - 1]);
+		int tag = getWordInt(data[rp], data[rp + 1]);
 
 		switch (tag) {
+		//case BOX:
 		case BOUNDARY: {
-			this->setReadPosition(strIt); // set current read position for the gePolygon method
-			MyPolygon newPol = getPolygon();
-
+			MyPolygon newPol = getPolygon(rp);
 			structPolys.push_back(newPol);
-			strIt = this->getReadPosition(); // is needed because the read position changed during the getPolygon method
 			break;
 		}
-
 		case SREF: {
-			//same principle as getting a polygon see above
-			this->setReadPosition(strIt);
-			StructRef newStrRef = getStructRef();
+			StructRef newStrRef = getStructRef(rp);
 			newStruct.addStuctRef(newStrRef);
-			strIt = this->getReadPosition();
-
 			break;
-		}
-			
-
+		}	
 		case PATH: {
-			this->setReadPosition(strIt);
-			Gds2Path newPath = getPath();
+			Gds2Path newPath = getPath(rp);
 			paths.push_back(newPath);
-			strIt = this->getReadPosition();
-
 			break;
 		}
-
 		case ENDSTR: {
 			isStruct = false;
-			this->setReadPosition(strIt + elementSize);
-			strIt += elementSize;
+			rp += elementSize;
 			break;
 		}
 		default:
-			strIt += elementSize;
+			rp += elementSize;
 			break;
 		}
 		
 	}
-
 
 
 	newStruct.setPaths(paths);
@@ -386,31 +362,21 @@ std::vector<Gds2Structure> Gds2Import::getModelData() {
 			}
 
 			case BOUNDARY: {
-				this->setReadPosition(i); // set current read position for the gePolygon method
-				MyPolygon newPol = getPolygon();
-
+				MyPolygon newPol = getPolygon(i);
 				polygons.push_back(newPol);
-				i = this->getReadPosition(); // is needed because the read position changed during the getPolygon method
 				break;
 			}
 
 			case SREF: {
-				//same principle as getting a polygon see above
-				this->setReadPosition(i);
-				StructRef newStrRef = getStructRef();
+				StructRef newStrRef = getStructRef(i);
 				structRefs.push_back(newStrRef);
-				i = this->getReadPosition();
-
 				break;
 			}
 
 
 			case PATH: {
-				this->setReadPosition(i);
-				Gds2Path newPath = getPath();
+				Gds2Path newPath = getPath(i);
 				paths.push_back(newPath);
-				i = this->getReadPosition();
-
 				break;
 			}
 			}
