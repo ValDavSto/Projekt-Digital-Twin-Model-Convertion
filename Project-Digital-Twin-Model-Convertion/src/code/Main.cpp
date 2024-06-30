@@ -134,13 +134,14 @@ IC testIC();
 
 int main(int argc, char** argv)
 {
-	std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\nand2.gds)";
+	std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\SDFFRS_X2.gds)";
+	std::string stackUp = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\SDFFRS_X2.csv)";
 	//std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\4004.gds)";
 
-	Gds2Import import(path);
+	
 	//import.printTagCount();
 
-	IC new_IC = ICFactory::generateIC("Test", path);
+	IC new_IC = ICFactory::generateIC("Test", path, stackUp);
 
 	// create window
 	Viewer vout(50, 50, 500, 500);
@@ -230,7 +231,7 @@ std::list<BRepPrimAPI_MakePrism> create_IC(IC ic)
 	for (auto& layer : ic.getLayers())
 	{
 		std::list<std::list<gp_Pnt>> pnts_of_layer{};
-		height += 150/*layer.getHeight()*/;
+		height += layer.getHeight();
 
 		for (auto polygon : layer.getPolygons())
 		{

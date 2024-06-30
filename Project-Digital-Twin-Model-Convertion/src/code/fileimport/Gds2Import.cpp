@@ -397,3 +397,48 @@ std::vector<std::byte> Gds2Import::readFileData(const std::string& name) {
 	inputFile.close();
 	return buffer;
 }
+
+
+std::vector<std::pair<int, std::vector<int>>> Gds2Import::readStackUp(std::string path){
+	std::fstream fIn;
+	std::vector<std::pair<int, std::vector<int>>> stackUpInfo = {};
+	std::vector<int> row = {};
+	std::string line, word = "";
+	int stackUp = 0;
+
+	fIn.open(path, std::ios::in);
+	
+	if (!fIn.is_open()) {
+		std::cerr << "File does not exist or couldn't be opened." << std::endl;
+		return stackUpInfo;
+	}
+
+
+	
+	while (getline(fIn, line)) {
+		row.clear();
+		std::stringstream s(line);
+		int i = 0;
+
+		
+		while (getline(s, word, ';')) {
+			if (i == 0) {
+				stackUp = std::stoi(word);
+			}
+			else {
+				row.push_back(std::stoi(word));
+			}
+			i++;
+		}
+
+		stackUpInfo.push_back(std::make_pair(stackUp, row));
+	}
+	fIn.close();
+
+	std::sort(stackUpInfo.begin(), stackUpInfo.end());
+
+	/*for (auto& info : stackUpInfo) {
+		std::cout << info.first << std::endl;
+	}*/
+	return stackUpInfo;
+}

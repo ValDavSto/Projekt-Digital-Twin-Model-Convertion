@@ -30,6 +30,6 @@ public:
 	std::vector<std::byte> readFileData(const std::string& name);
 	std::vector<MyPolygon> getPolygons();
 	std::vector<Gds2Structure> getModelData();
-
+	std::vector<std::pair<int, std::vector<int>>> readStackUp(std::string path);
 };
 #endif

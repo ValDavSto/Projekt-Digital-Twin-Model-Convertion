@@ -14,7 +14,7 @@ private:
 	std::vector<MyPolygon> polygons; // polygons which are located on the layer
 
 public:
-	Layer(int id_, std::vector<MyPolygon> poly, float thickness_, float height_);
+	Layer(int id_, std::vector<MyPolygon> poly, float height_, float thickness_);
 
 	int getId();
 	float getThikness();

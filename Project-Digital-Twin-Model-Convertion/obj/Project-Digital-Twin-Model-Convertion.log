@@ -1,5 +1,25 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1119,5): warning MSB8027: Two or more files with the name of main.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are src\code\model\main.cpp, src\code\Main.cpp.
+  ICFactory.cpp
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,90): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,90): warning C4244:         with
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,90): warning C4244:         [
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,90): warning C4244:             _Ty=int
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,90): warning C4244:         ]
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,74): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,74): warning C4244:         with
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,74): warning C4244:         [
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,74): warning C4244:             _Ty=int
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\ICFactory.cpp(30,74): warning C4244:         ]
+  Main.cpp
+  Gds2Path.cpp
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(28,19): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(50,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\datastructure\Gds2Path.cpp(128,13): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Gds2Structure.cpp
+  IC.cpp
+  Layer.cpp
   Gds2Import.cpp
 C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(25,22): warning C4267: '=': conversion from 'size_t' to 'uint32_t', possible loss of data
 C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\src\code\fileimport\Gds2Import.cpp(389,18): warning C4244: 'initializing': conversion from 'uintmax_t' to 'uint32_t', possible loss of data
+  Generating Code...
   Project-Digital-Twin-Model-Convertion.vcxproj -> C:\Users\Valentin\Documents\GitHub\Projekt-Digital-Twin-Model-Convertion\Project-Digital-Twin-Model-Convertion\bin\Project-Digital-Twin-Model-Convertion64d.exe

@@ -13,9 +13,9 @@
 
 class ICFactory{
 private:
-	static std::vector<Layer> getLayers(std::vector<MyPolygon>& polygons);
+	static std::vector<Layer> getLayers(std::vector<MyPolygon>& polygons, std::vector<std::pair<int, std::vector<int>>>& stackUpInfo);
 public:
-	static IC generateIC(std::string name, std::string filepath);
+	static IC generateIC(std::string name, std::string filepath, std::string stackUpPath);
 };
 
 #endif
