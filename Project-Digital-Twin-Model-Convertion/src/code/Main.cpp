@@ -230,6 +230,7 @@ std::list<BRepPrimAPI_MakePrism> create_IC(IC ic)
 
 	for (auto& layer : ic.getLayers())
 	{
+		//std::cout << "Layer: " << layer.getId() << std::endl;
 		std::list<std::list<gp_Pnt>> pnts_of_layer{};
 		height += layer.getHeight();
 
@@ -248,7 +249,7 @@ std::list<BRepPrimAPI_MakePrism> create_IC(IC ic)
 		std::list<BRepBuilderAPI_MakePolygon> polygons = make_polygons(pnts_of_layer);
 		std::list<BRepBuilderAPI_MakeFace> faces = make_faces(polygons);
 		BRepAlgoAPI_Fuse* fused_face = new BRepAlgoAPI_Fuse(fuse_faces(faces));
-		BRepPrimAPI_MakePrism prism(fused_face->Shape(), gp_Vec(0.0, 0.0, /*layer.getThickness()*/100));
+		BRepPrimAPI_MakePrism prism(fused_face->Shape(), gp_Vec(0.0, 0.0, layer.getThikness()));
 
 		//delete fused_face;
 		//fused_face = nullptr;

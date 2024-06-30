@@ -438,7 +438,7 @@ std::vector<std::pair<int, std::vector<int>>> Gds2Import::readStackUp(std::strin
 	std::sort(stackUpInfo.begin(), stackUpInfo.end());
 
 	/*for (auto& info : stackUpInfo) {
-		std::cout << info.first << std::endl;
+		std::cout << info.second[1] << std::endl;
 	}*/
 	return stackUpInfo;
 }

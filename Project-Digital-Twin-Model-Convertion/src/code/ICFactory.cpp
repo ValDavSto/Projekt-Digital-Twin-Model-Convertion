@@ -21,7 +21,7 @@ std::vector<Layer> ICFactory::getLayers(std::vector<MyPolygon>& polygons, std::v
 
 		std::cout << "Layer : " << layer.first << "; " << "Number of Polygons: " << layer.second.size() << std::endl;
 
-		Layer newLayer(layer.first, layer.second, 2.0, 2.0);
+		Layer newLayer(layer.first, layer.second, 50, 150);
 		layers.push_back(newLayer);
 		}
 	}
