@@ -8,3 +8,7 @@ TKV3d.lib
 TKService.lib
 TKBO.lib
 TKDESTEP.lib
+TKLCAF.lib
+TKXCAF.lib
+TKBinXCAF.lib
+TKG3d.lib
