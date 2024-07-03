@@ -1,7 +1,7 @@
 #include "Layer.h"
 
-Layer::Layer(int id_, std::vector<MyPolygon> poly, float thickness_, float height_)
-	: id(id_), polygons(poly), thikness(thickness_), height(height_) {}
+Layer::Layer(int id_, std::vector<MyPolygon> poly, float height_, float thickness_)
+	: id(id_), polygons(poly), height(height_), thikness(thickness_) {}
 
 int Layer::getId() { return id; }
 
