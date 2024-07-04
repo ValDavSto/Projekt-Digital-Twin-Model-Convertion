@@ -256,18 +256,28 @@ void create_IC(IC ic, Handle(XCAFDoc_ShapeTool)& shape_tool, Handle(XCAFDoc_Colo
 
 		auto polygons = make_polygons(pnts_of_layer);
 		auto faces = make_faces(polygons);
-		BRepAlgoAPI_Fuse* fused_face = new BRepAlgoAPI_Fuse(fuse_faces(faces));
-		BRepPrimAPI_MakePrism prism(fused_face->Shape(), gp_Vec(0.0, 0.0, layer.getThikness()));
+		TopoDS_Shape shape;
+		if (faces.size() == 1)
+		{
+			shape = BRepPrimAPI_MakePrism(faces.front().Shape(), gp_Vec(0.0, 0.0, layer.getThikness()));
+		} else if (faces.size() > 1)
+		{
+			BRepAlgoAPI_Fuse* fused_face = new BRepAlgoAPI_Fuse(fuse_faces(faces));
+			shape = BRepPrimAPI_MakePrism(fused_face->Shape(), gp_Vec(0.0, 0.0, layer.getThikness()));
+		} else
+		{
+			shape = TopoDS_Shape();
+		}
 
 		// add prism to XDE file
-		TDF_Label label = shape_tool->AddShape(prism, false);
+		TDF_Label label = shape_tool->AddShape(shape, false);
 		color_tool->SetColor(label, COLORS[color_index++ % COLORS.size()], XCAFDoc_ColorGen);
 
 		std::string name = "layer" + std::to_string(layer.getId());
 		TDataStd_Name::Set(label, name.c_str());
 
 		// visualize
-		vout << prism;
+		vout << shape;
 	}
 }
 
