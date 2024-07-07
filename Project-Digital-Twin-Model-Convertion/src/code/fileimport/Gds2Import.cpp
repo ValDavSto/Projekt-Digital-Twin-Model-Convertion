@@ -207,7 +207,7 @@ Gds2Structure Gds2Import::getStruct(uint32_t& rp){
 		int tag = getWordInt(data[rp], data[rp + 1]);
 
 		switch (tag) {
-		//case BOX:
+		case BOX:
 		case BOUNDARY: {
 			MyPolygon newPol = getPolygon(rp);
 			structPolys.push_back(newPol);
