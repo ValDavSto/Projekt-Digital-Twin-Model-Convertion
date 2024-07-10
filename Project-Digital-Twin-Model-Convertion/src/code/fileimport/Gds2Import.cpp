@@ -315,6 +315,45 @@ std::vector<MyPolygon> Gds2Import::getPolygons() {
 	return polygons;
 }
 
+std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> Gds2Import::getStructData(std::vector<Gds2Structure>& structures){
+	
+	std::vector<MyPolygon> polygons = {};
+	std::map<std::string, Gds2Structure> structMap = {};
+	std::vector<Gds2Path> paths = {};
+
+	for (auto& structure : structures) {
+		structMap[structure.getName()] = structure;
+	}
+
+	for (auto& structure : structures) {
+		
+		std::vector<MyPolygon> structPolys = structure.getPolygons();
+		std::vector<MyPolygon> emptyVec = {};
+
+		if (structure.getStructRef().size() > 0) {
+			std::vector<MyPolygon> strRefPolys = getStrRefPolygons(structure, structMap, emptyVec);
+			structPolys.insert(structPolys.end(), strRefPolys.begin(), strRefPolys.end());
+		}
+		
+
+		if (structure.getPaths().size() > 0) {
+			std::vector<Gds2Path> structPaths = structure.getPaths();
+
+			paths.insert(paths.end(), structPaths.begin(), structPaths.end());
+		}
+
+
+		std::cout << "Structure: " << structure.getName() << " Polygons: " << structPolys.size() << " StrRef: " << structure.getStructRef().size() << " Paths: " << paths.size() << std::endl;
+
+		polygons.insert(polygons.end(), structPolys.begin(), structPolys.end());
+
+	}
+
+	std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> structData = std::make_pair(polygons, paths);
+
+	return structData;
+}
+
 // This methods parses the file by starting at the first tag and than skips the given tag size. When the tag is included in the tag map the according data is extracted from the gds2 file
 std::vector<Gds2Structure> Gds2Import::getModelData() {
 	std::vector<Gds2Structure> structures = {};
@@ -383,6 +422,88 @@ std::vector<Gds2Structure> Gds2Import::getModelData() {
 
 	return structures;
 }
+
+std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> Gds2Import::modelData() {
+	std::vector<Gds2Structure> structures = {};
+	std::vector<MyPolygon> polygons = {};
+	std::vector<Gds2Path> paths = {};
+	std::vector<StructRef> structRefs = {};
+	std::map<std::string, Gds2Structure> structMap = {}; // map to track existing structures, important to read StrRefs
+	std::map<int, int> tags;
+	tags[STRNAME] = 0;
+	tags[BOUNDARY] = 0;
+	tags[SREF] = 0;
+	tags[PATH] = 0;
+
+	uint32_t i = 2; // i is 2 because the first two bytes of a gds2 file denote the size of the first tag (header-tag)
+
+	while (i < filesize - 2) {
+		int tag = getWordInt(data[i], data[i + 1]);
+		int elementSize = getWordInt(data[i - 2], data[i - 1]);
+
+		// Checks if the current tag contains important data. 
+		// If it is the case it will read the data else it will jump to the next tag, based on the given element Size
+		if (tags.count(tag) == 1) {
+
+
+			switch (tag) {
+
+			case STRNAME: {
+				Gds2Structure newStruct = getStruct(i);
+				structMap[newStruct.getName()] = newStruct;
+				structures.push_back(newStruct);
+				break;
+			}
+
+			case BOUNDARY: {
+				MyPolygon newPol = getPolygon(i);
+				polygons.push_back(newPol);
+				break;
+			}
+
+			case SREF: {
+				StructRef newStrRef = getStructRef(i);
+				structRefs.push_back(newStrRef);
+				break;
+			}
+
+
+			case PATH: {
+				Gds2Path newPath = getPath(i);
+				paths.push_back(newPath);
+				break;
+			}
+			}
+		}
+		else {
+			if (elementSize == 0) {
+				i++;
+			}
+
+			i += elementSize;
+		}
+	}
+
+	// Print which elemnets the file contains
+	std::cout << "Structures: " << structures.size() << std::endl;
+	std::cout << "Polygons: " << polygons.size() << std::endl;
+	std::cout << "SREF: " << structRefs.size() << std::endl;
+	std::cout << "Paths: " << paths.size() << std::endl;
+
+
+	//
+	std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> structData = getStructData(structures);
+
+	//add BOUNDARYS to polygon data
+	structData.first.insert(structData.first.end(), polygons.begin(), polygons.end());
+
+
+
+
+	//
+	return structData;
+}
+
 
 std::vector<std::byte> Gds2Import::readFileData(const std::string& name) {
 	std::filesystem::path inputFilePath{ name };

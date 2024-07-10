@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string>
-#include "Layer.h"
 #include "Polygon.h"
 
 class Gds2Path {

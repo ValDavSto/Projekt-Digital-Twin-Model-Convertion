@@ -88,7 +88,8 @@ int main(int argc, char** argv)
 	Viewer vout(50, 50, 500, 500);
 
 	// create 3D-IC from gdsII file 
-	std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\SDFFRS_X2.gds)";
+	//SDFFRS_X2
+	std::string path = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\nand2.gds)";
 	std::string stackUp = R"(C:\Users\Valentin\OneDrive\Info\Master\SoSe 24\Projekt Digitalization\Example Files\gdsii\SDFFRS_X2.csv)";
 	IC new_IC = ICFactory::generateIC("Test", path, stackUp);
 	create_IC(new_IC, shape_tool, color_tool, vout);
