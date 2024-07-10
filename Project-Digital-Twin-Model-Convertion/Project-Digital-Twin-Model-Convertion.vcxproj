@@ -166,7 +166,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>C:\occt\OCCT-7_8_0-install\win64\vc14\libd\*;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TKernel.lib;TKPrim.lib;TKTopAlgo.lib;TKMath.lib;TKBRep.lib;TKOpenGl.lib;TKV3d.lib;TKService.lib;TKBO.lib;TKDESTEP.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\occt\OCCT-7_8_0-install\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

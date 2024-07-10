@@ -16,7 +16,7 @@ std::vector<Layer> ICFactory::getLayers(std::vector<MyPolygon>& polygons, std::v
 	// TODO: thikness and 
 	std::vector<Layer> layers = {};
 
-	if (stackUpInfo.size() != layerMap.size() || stackUpInfo[0].second.size() != 3) {
+	if (stackUpInfo.size() != layerMap.size()) {
 		for (auto& layer : layerMap) {
 
 		std::cout << "Layer : " << layer.first << "; " << "Number of Polygons: " << layer.second.size() << std::endl;
