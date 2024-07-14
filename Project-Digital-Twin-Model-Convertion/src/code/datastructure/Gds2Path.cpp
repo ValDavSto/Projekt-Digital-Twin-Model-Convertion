@@ -172,6 +172,8 @@ unsigned int Gds2Path::getWidth(){ return width; }
 
 unsigned int Gds2Path::getLayer(){ return layer; }
 
+unsigned int Gds2Path::getPathType(){ return pathType; }
+
 std::vector<std::pair<int, int>> Gds2Path::getCoordinates(){ return coordinates; }
 
 void Gds2Path::setWidth(int width) { this->width = width; }

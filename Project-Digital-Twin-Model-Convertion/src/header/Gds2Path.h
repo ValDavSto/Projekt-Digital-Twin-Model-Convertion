@@ -23,6 +23,7 @@ public:
 
 	unsigned int getWidth();
 	unsigned int getLayer();
+	unsigned int getPathType();
 	std::vector<std::pair<int, int>> getCoordinates();
 	void setWidth(int width);
 	void setLayer(unsigned int layer);

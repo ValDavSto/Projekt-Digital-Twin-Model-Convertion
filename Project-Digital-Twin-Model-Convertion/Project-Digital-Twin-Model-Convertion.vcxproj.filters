@@ -14,6 +14,11 @@
     <ClCompile Include="src\code\model\Viewer.cpp" />
     <ClCompile Include="src\code\model\ViewerInteractor.cpp" />
     <ClCompile Include="src\code\datastructure\Gds2Path.cpp" />
+    <ClCompile Include="src\code\model\IC3DCreator.cpp" />
+    <ClCompile Include="src\code\model\Quadtree.cpp" />
+    <ClCompile Include="src\code\model\QuadtreeNode.cpp" />
+    <ClCompile Include="src\code\model\ShapeUtilities.cpp" />
+    <ClCompile Include="src\code\model\STEPWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\header\Gds2Import.h" />
@@ -27,5 +32,10 @@
     <ClInclude Include="src\header\Viewer.h" />
     <ClInclude Include="src\header\ViewerInteractor.h" />
     <ClInclude Include="src\header\Gds2Path.h" />
+    <ClInclude Include="src\header\IC3DCreator.h" />
+    <ClInclude Include="src\header\Quadtree.h" />
+    <ClInclude Include="src\header\QuadtreeNode.h" />
+    <ClInclude Include="src\header\ShapeUtilities.h" />
+    <ClInclude Include="src\header\STEPWriter.h" />
   </ItemGroup>
 </Project>
