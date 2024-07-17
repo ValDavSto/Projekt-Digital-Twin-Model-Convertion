@@ -24,6 +24,7 @@ private:
 	MyPolygon getPolygon(uint32_t& readPosition);
 	Gds2Path getPath(uint32_t& readPosition);
 	Gds2Structure getStruct(uint32_t& readPosition);
+	std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> getStrRefData(Gds2Structure& structure, std::map<std::string, Gds2Structure>& structMap, std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>>& strReFData);
 public:
 	Gds2Import();
 	Gds2Import(std::string filePath);

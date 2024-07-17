@@ -273,6 +273,52 @@ std::vector<MyPolygon> Gds2Import::getStrRefPolygons(Gds2Structure& structure, s
 	return polygons;
 }
 
+std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> Gds2Import::getStrRefData(Gds2Structure& structure, std::map<std::string, Gds2Structure>& structMap, std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>>& strRefData) {
+
+
+	for (auto& strRef : structure.getStructRef()) {
+		std::pair<int, int> placement = strRef.getCoordinates();
+		Gds2Structure referencedStruct = structMap[strRef.getName()];
+		std::vector<MyPolygon> refPoly = referencedStruct.getPolygons();
+		std::vector<Gds2Path> refPaths = referencedStruct.getPaths();
+
+		if (referencedStruct.getStructRef().size() > 0) {
+			getStrRefData(referencedStruct, structMap, strRefData);
+			// TODO Hier noch zukünftiges return value verarbeiten
+		}
+		for (auto& polygon : refPoly) {
+			std::vector<std::pair<int, int>> coords = polygon.getCoordinates();
+			std::vector<std::pair<int, int>> newCoords = {};
+
+			for (auto& xy : coords) {
+				xy = std::make_pair(xy.first + placement.first, xy.second + placement.second);
+				newCoords.push_back(xy);
+			}
+			polygon.setCoordinates(newCoords);
+			strRefData.first.push_back(polygon);
+
+		}
+
+		for (auto& path : refPaths) {
+			std::vector<std::pair<int, int>> coords = path.getCoordinates();
+			std::vector<std::pair<int, int>> newCoords = {};
+
+			for (auto& xy : coords) {
+				xy = std::make_pair(xy.first + placement.first, xy.second + placement.second);
+				newCoords.push_back(xy);
+			}
+
+			path.setCoordinates(newCoords);
+			strRefData.second.push_back(path);
+		}
+
+
+	}
+
+	return strRefData;
+}
+
+
 
 std::vector<MyPolygon> Gds2Import::getPolygons() {
 	std::vector<Gds2Structure> structures = getModelData();
@@ -328,11 +374,12 @@ std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> Gds2Import::getStructDa
 	for (auto& structure : structures) {
 		
 		std::vector<MyPolygon> structPolys = structure.getPolygons();
-		std::vector<MyPolygon> emptyVec = {};
+		std::pair<std::vector<MyPolygon>,std::vector<Gds2Path>> emptyVec = {};
 
 		if (structure.getStructRef().size() > 0) {
-			std::vector<MyPolygon> strRefPolys = getStrRefPolygons(structure, structMap, emptyVec);
-			structPolys.insert(structPolys.end(), strRefPolys.begin(), strRefPolys.end());
+			std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> strRefData = getStrRefData(structure, structMap, emptyVec);
+			structPolys.insert(structPolys.end(), strRefData.first.begin(), strRefData.first.end());
+			paths.insert(paths.end(), strRefData.second.begin(), strRefData.second.end());
 		}
 		
 
@@ -496,6 +543,12 @@ std::pair<std::vector<MyPolygon>, std::vector<Gds2Path>> Gds2Import::modelData()
 
 	//add BOUNDARYS to polygon data
 	structData.first.insert(structData.first.end(), polygons.begin(), polygons.end());
+	/*std::vector<MyPolygon> emptyVec = {};
+
+	for(auto& strRef : structRefs){
+		std::vector<MyPolygon> strRefPolys = getStrRefPolygons(structMap[strRef.getName()] , structMap, emptyVec);
+		structData.first.insert(structData.first.end(), strRefPolys.begin(), strRefPolys.end());
+		}*/
 
 
 
